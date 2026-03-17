@@ -13,7 +13,7 @@
     <style>
         body { 
             font-family: 'Noto Sans TC', sans-serif; 
-            background-image: url('https://images.unsplash.com/photo-1532236204992-f5e85c0142ce?q=80&w=1920&auto=format&fit=crop');
+            background-image: url('pokemon.jpg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -181,13 +181,13 @@
                 </div>
             </div>
 
-            <div v-if="currentTab === 'expense'">
+            <div v-if="currentTab === 'expense'" class="pb-10">
                 <div v-if="!activeMember">
                     <div class="bg-gradient-to-br from-slate-700 to-slate-800 text-white rounded-2xl p-5 mb-6 shadow-lg text-center relative overflow-hidden">
                         <div class="relative z-10"><p class="text-xs opacity-70 mb-1">總花費 (TWD)</p><h3 class="text-3xl font-bold font-mono">{{ totalExpenseTWD.toLocaleString() }}</h3></div>
                     </div>
                     <h2 class="text-lg font-bold text-slate-800 mb-3">誰付的錢？</h2>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-2 gap-3 mb-6">
                         <div v-for="member in familyMembers" :key="member.name" @click="activeMember = member.name" class="bg-white/80 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center cursor-pointer">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg mr-3 shadow-sm" :class="member.bg"><i :class="member.icon"></i></div>
                             <div><h3 class="font-bold text-sm text-slate-700">{{ member.name }}</h3><p class="text-[10px] font-mono text-slate-400">¥{{ getMemberTotal(member.name, 'expense').toLocaleString() }}</p></div>
@@ -207,8 +207,33 @@
                         </div>
                         <span class="font-mono font-bold text-slate-700">¥ {{ Number(exp.amount).toLocaleString() }}</span>
                     </div>
-                    <button @click="showAddModal = 'expense'" class="fixed bottom-24 right-6 w-12 h-12 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-xl z-40"><i class="fa-solid fa-plus"></i></button>
                 </div>
+
+                <div class="mt-8 bg-white/90 backdrop-blur-sm p-4 rounded-2xl shadow-sm border border-blue-100 relative">
+                    <h3 class="font-bold text-blue-500 mb-3 text-sm flex items-center">
+                        <i class="fa-solid fa-coins mr-2"></i>即時匯率換算
+                    </h3>
+                    <div class="flex items-center bg-blue-50/50 rounded-lg px-3 py-2 mb-3 border border-blue-100">
+                        <span class="text-xs text-slate-500 mr-2">目前的匯率 1 JPY =</span>
+                        <input v-model="exchangeRate" type="number" step="0.0001" class="w-20 text-right font-bold text-blue-600 outline-none text-sm bg-transparent border-b border-blue-200 focus:border-blue-400 transition">
+                        <span class="text-xs text-slate-500 ml-2">TWD</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="flex-1 relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 font-mono">¥</span>
+                            <input v-model="yenAmount" type="number" class="w-full bg-slate-100 rounded-xl py-3 pl-8 pr-3 outline-none font-mono text-lg font-bold text-slate-700 transition focus:ring-2 focus:ring-blue-200">
+                        </div>
+                        <i class="fa-solid fa-arrow-right-arrow-left text-slate-300"></i>
+                        <div class="flex-1 relative">
+                            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 font-mono">$</span>
+                            <div class="w-full bg-slate-200 rounded-xl py-3 pl-8 pr-3 font-mono font-bold text-slate-800 text-lg flex items-center overflow-hidden">
+                                {{ calculatedTwd }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button v-if="activeMember || !activeMember" @click="showAddModal = 'expense'" class="fixed bottom-24 right-6 w-12 h-12 bg-slate-800 text-white rounded-full shadow-lg flex items-center justify-center text-xl z-40"><i class="fa-solid fa-plus"></i></button>
             </div>
 
             <div v-if="currentTab === 'note'">
@@ -307,9 +332,7 @@
             {
                 date: "20", weekday: "Fri", location: "上野", lat: 35.7111, lng: 139.7767,
                 events: [
-                    // ❗️ 這裡加入了自訂圖片標籤： <img src='YOUR_ICON_NAME.png' class='inline-block w-5 h-5 align-middle mr-1'>
                     { time: "14:55", title: "抵達成田機場 T1", category: "航班", transportType: "plane", travelTime: "0m", note: "<a href='https://www.google.com/maps/place/Starbucks+Coffee+-+Narita+Airport+Terminal+1+Central+Building+4F' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-1'><i class='fa-solid fa-map-pin'></i> 機場星巴克 (買伯爵奶香奶茶)</a><img src='YOUR_ICON_NAME.png' class='inline-block w-5 h-5 align-middle mr-1'> 買馬克杯 ☕", image: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&q=80", noNav: true },
-                    
                     { time: "16:00", title: "搭乘 Skyliner 直達上野", category: "交通", transportType: "subway", travelTime: "45m", note: "🚶 <b>出關與搭車動線：</b><br>出關領行李後，循「鐵道 (Railways)」指標搭乘電扶梯下至 B1，尋找藍色的「京成電鐵 (Keisei)」售票處與改札口。<br><br>🚄 <b>Skyliner 推薦班次 (T1發車)：</b><br>• 15:59 發車 ➔ 16:43 抵達<br>• 16:13 發車 ➔ 17:10 抵達<br>• 16:39 發車 ➔ 17:24 抵達<br>• 16:59 發車 ➔ 17:43 抵達<br><br>💡 抵達上野後可至東京JR服務站領取免費鑰匙圈", image: "https://images.unsplash.com/photo-1542044801-30d3e45ae49a?w=800&q=80", noNav: true },
                     { time: "17:30", title: "上野城市酒店", category: "住宿", transportType: "walk", travelTime: "10m", note: "🏨 飯店 Check-in 放行李", image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80", navTarget: "上野城市酒店 東京" },
                     { time: "18:00", title: "阿美橫丁", category: "美食", transportType: "walk", travelTime: "5m", note: "逛街吃晚餐：<br><br><a href='https://www.google.com/maps/search/?api=1&query=大章魚燒みなとや+上野' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-3'><i class='fa-solid fa-map-pin'></i> 大章魚燒みなとや</a><a href='https://www.google.com/maps/search/?api=1&query=登亭+上野広小路店' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 登亭 上野広小路店 (預約19:00)</a>", image: "https://images.unsplash.com/photo-1505069411649-14a01c40212e?w=800&q=80" },
@@ -404,6 +427,7 @@
                 this.dbConnected = true;
                 this.newItem.date = new Date().toISOString().split('T')[0];
                 this.fetchWeather();
+                this.fetchExchangeRate(); // 呼叫匯率 API
             },
             watch: { selectedDayIndex() { this.fetchWeather(); } },
             computed: {
@@ -418,6 +442,18 @@
                 foodLocations() { return [...new Set(this.foods.map(i => i.location))].sort(); }
             },
             methods: {
+                // 自動抓取即時匯率的方法
+                async fetchExchangeRate() {
+                    try {
+                        const res = await fetch('https://open.er-api.com/v6/latest/JPY');
+                        const data = await res.json();
+                        if (data && data.rates && data.rates.TWD) {
+                            this.exchangeRate = data.rates.TWD.toFixed(4);
+                        }
+                    } catch (e) {
+                        console.log("匯率載入失敗", e);
+                    }
+                },
                 saveNote() {
                     update(ref(db), { notepad: this.notepadText }).then(() => {
                         this.saveStatus = true;
