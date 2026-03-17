@@ -23,6 +23,8 @@
         .header-curve { border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
         .fade-enter-active, .fade-leave-active { transition: opacity 0.8s; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
+        .animate-fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="text-slate-600 overflow-x-hidden">
@@ -44,9 +46,9 @@
         </header>
 
         <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-1 z-50 bg-white/90 backdrop-blur-md px-3 py-2 rounded-full shadow-2xl border border-white/50 ring-1 ring-pink-100">
-            <button v-for="tab in ['schedule', 'map', 'food', 'shopping', 'expense', 'note']" @click="switchTab(tab)" 
+            <button v-for="tab in ['schedule', 'food', 'shopping', 'expense', 'note']" @click="switchTab(tab)" 
                     :class="currentTab === tab ? 'bg-gradient-to-tr from-pink-400 to-pink-500 text-white shadow-lg scale-110' : 'text-slate-400 hover:text-pink-400'" 
-                    class="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300">
+                    class="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300">
                 <i :class="getTabIcon(tab)" class="text-lg"></i>
             </button>
         </div>
@@ -62,63 +64,59 @@
                         <span class="text-lg font-bold font-mono">{{ day.date }}</span>
                         <span class="text-[9px] opacity-60">D{{ index + 1 }}</span>
                     </div>
-                </div>
-
-                <div class="bg-gradient-to-r from-blue-400 to-pink-300 text-white rounded-2xl p-4 mb-4 shadow-sm flex justify-between items-center relative overflow-hidden min-h-[90px]">
-                    <div class="relative z-10">
-                        <div class="text-xs opacity-90 flex items-center"><i class="fa-solid fa-location-dot mr-1"></i>{{ currentSchedule.location }} <span class="ml-2 text-[10px] opacity-70 border border-white/30 px-1 rounded">即時</span></div>
-                        <div v-if="weatherLoading" class="mt-1 text-sm opacity-80">天氣載入中...</div>
-                        <div v-else><div class="text-2xl font-bold mt-1">{{ currentWeather.temp }}°C <span class="text-sm font-normal">{{ currentWeather.desc }}</span></div></div>
+                    
+                    <div @click="selectedDayIndex = 'map'"
+                         :class="selectedDayIndex === 'map' ? 'bg-gradient-to-b from-pink-400 to-pink-500 text-white ring-2 ring-pink-200 shadow-md transform -translate-y-1' : 'bg-white text-slate-400 border border-pink-100'"
+                         class="flex-shrink-0 w-14 h-16 rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all duration-300">
+                        <span class="text-[10px] font-medium opacity-80">All</span>
+                        <span class="text-xl font-bold"><i class="fa-solid fa-map"></i></span>
+                        <span class="text-[9px] opacity-60">行程圖</span>
                     </div>
-                    <i :class="currentWeather.icon" class="text-4xl opacity-80 relative z-10 drop-shadow-md"></i>
-                    <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-white/20 rounded-full blur-xl"></div>
                 </div>
 
-                <div class="space-y-0">
-                    <div v-for="(item, idx) in currentSchedule.events" :key="idx" class="relative pl-5 pb-6 border-l-2 border-dashed border-pink-200 last:border-0">
-                        <div class="absolute -left-[7px] top-0 w-3 h-3 rounded-full bg-pink-400 ring-2 ring-pink-100"></div>
-                        <div v-if="idx > 0" class="flex items-center text-[10px] text-slate-400 mb-1 ml-1"><i :class="getTransportIcon(item.transportType)" class="mr-1"></i><span>{{ item.travelTime }}</span></div>
-                        <div v-else-if="idx === 0" class="flex items-center text-[10px] text-slate-400 mb-1 ml-1"><i class="fa-solid fa-bed mr-1"></i><span>出發/開始</span></div>
-                        <div class="bg-white/80 backdrop-blur p-3 rounded-2xl shadow-sm border border-pink-50 relative overflow-hidden group hover:shadow-md transition duration-300">
-                            <span :class="getCategoryColor(item.category)" class="absolute top-0 right-0 px-2 py-1 text-[9px] rounded-bl-lg font-bold text-white shadow-sm">{{ item.category }}</span>
-                            <div class="flex items-start">
-                                <div class="mr-3 mt-1 text-pink-500 text-lg"><i :class="getCategoryIcon(item.category)"></i></div>
-                                <div class="flex-1 w-full">
-                                    <h3 class="font-bold text-slate-800 text-base leading-tight mb-1">{{ item.title }}</h3>
-                                    <p class="text-sm sm:text-base text-pink-600 font-bold font-mono mb-2"><i class="fa-regular fa-clock mr-1"></i>{{ item.time }}</p>
-                                    
-                                    <div v-if="item.image" class="mb-2 mt-1 rounded-lg overflow-hidden h-28 w-full relative group-hover:shadow-inner transition"><img :src="item.image" class="w-full h-full object-cover transition duration-700 group-hover:scale-110"></div>
-                                    
-                                    <p v-if="item.note" class="text-xs text-slate-700 bg-slate-50/70 p-3 rounded-lg mb-2 border border-slate-100 leading-relaxed" v-html="item.note"></p>
-                                    
-                                    <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(item.title + ' 東京') + '&travelmode=transit'" 
-                                       target="_blank" 
-                                       class="flex items-center justify-center w-full mt-3 bg-blue-50/80 hover:bg-blue-100 text-blue-600 text-xs font-bold py-3 px-4 rounded-xl shadow-sm transition-all active:scale-95 border border-blue-200">
-                                        <i class="fa-solid fa-train-subway mr-2 text-lg"></i> 
-                                        <span class="tracking-wide">路線與實時班次查詢</span>
-                                    </a>
+                <div v-if="selectedDayIndex === 'map'" class="animate-fade-in mt-4">
+                    <img src="YOUR_IMAGE_URL_HERE" alt="東京行程總覽圖" class="w-full h-auto rounded-xl shadow-sm border border-slate-100">
+                    <p class="text-center text-xs text-slate-400 mt-3">💡 點擊上方的日期即可返回每日行程表</p>
+                </div>
+
+                <div v-else class="animate-fade-in">
+                    <div class="bg-gradient-to-r from-blue-400 to-pink-300 text-white rounded-2xl p-4 mb-4 shadow-sm flex justify-between items-center relative overflow-hidden min-h-[90px]">
+                        <div class="relative z-10">
+                            <div class="text-xs opacity-90 flex items-center"><i class="fa-solid fa-location-dot mr-1"></i>{{ currentSchedule.location }} <span class="ml-2 text-[10px] opacity-70 border border-white/30 px-1 rounded">即時</span></div>
+                            <div v-if="weatherLoading" class="mt-1 text-sm opacity-80">天氣載入中...</div>
+                            <div v-else><div class="text-2xl font-bold mt-1">{{ currentWeather.temp }}°C <span class="text-sm font-normal">{{ currentWeather.desc }}</span></div></div>
+                        </div>
+                        <i :class="currentWeather.icon" class="text-4xl opacity-80 relative z-10 drop-shadow-md"></i>
+                        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-white/20 rounded-full blur-xl"></div>
+                    </div>
+
+                    <div class="space-y-0">
+                        <div v-for="(item, idx) in currentSchedule.events" :key="idx" class="relative pl-5 pb-6 border-l-2 border-dashed border-pink-200 last:border-0">
+                            <div class="absolute -left-[7px] top-0 w-3 h-3 rounded-full bg-pink-400 ring-2 ring-pink-100"></div>
+                            <div v-if="idx > 0" class="flex items-center text-[10px] text-slate-400 mb-1 ml-1"><i :class="getTransportIcon(item.transportType)" class="mr-1"></i><span>{{ item.travelTime }}</span></div>
+                            <div v-else-if="idx === 0" class="flex items-center text-[10px] text-slate-400 mb-1 ml-1"><i class="fa-solid fa-bed mr-1"></i><span>出發/開始</span></div>
+                            <div class="bg-white/80 backdrop-blur p-3 rounded-2xl shadow-sm border border-pink-50 relative overflow-hidden group hover:shadow-md transition duration-300">
+                                <span :class="getCategoryColor(item.category)" class="absolute top-0 right-0 px-2 py-1 text-[9px] rounded-bl-lg font-bold text-white shadow-sm">{{ item.category }}</span>
+                                <div class="flex items-start">
+                                    <div class="mr-3 mt-1 text-pink-500 text-lg"><i :class="getCategoryIcon(item.category)"></i></div>
+                                    <div class="flex-1 w-full">
+                                        <h3 class="font-bold text-slate-800 text-base leading-tight mb-1">{{ item.title }}</h3>
+                                        <p class="text-sm sm:text-base text-pink-600 font-bold font-mono mb-2"><i class="fa-regular fa-clock mr-1"></i>{{ item.time }}</p>
+                                        
+                                        <div v-if="item.image" class="mb-2 mt-1 rounded-lg overflow-hidden h-28 w-full relative group-hover:shadow-inner transition"><img :src="item.image" class="w-full h-full object-cover transition duration-700 group-hover:scale-110"></div>
+                                        
+                                        <div v-if="item.note" class="text-xs text-slate-700 bg-slate-50/70 p-3 rounded-lg mb-2 border border-slate-100 leading-relaxed" v-html="item.note"></div>
+                                        
+                                        <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(item.title + ' 東京') + '&travelmode=transit'" 
+                                           target="_blank" 
+                                           class="flex items-center justify-center w-full mt-3 bg-blue-50/80 hover:bg-blue-100 text-blue-600 text-xs font-bold py-3 px-4 rounded-xl shadow-sm transition-all active:scale-95 border border-blue-200">
+                                            <i class="fa-solid fa-location-arrow mr-2 text-lg"></i> 
+                                            <span class="tracking-wide">導航</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div v-if="currentTab === 'map'">
-                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                    五天四夜專屬地圖 <i class="fa-solid fa-map-marked-alt ml-2 text-pink-400"></i>
-                </h2>
-                <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 relative group overflow-hidden">
-                    <img src="YOUR_IMAGE_URL_HERE" alt="東京行程總覽圖" class="w-full h-auto rounded-xl transition duration-500 group-hover:scale-105">
-                    <div class="mt-3 p-3 bg-pink-50 rounded-xl">
-                        <p class="text-xs text-slate-600 font-bold mb-1">📍 路線速覽</p>
-                        <p class="text-[11px] text-slate-500 leading-relaxed">
-                            Day 1：成田機場 ➔ 上野<br>
-                            Day 2：淺草 ➔ 新宿 ➔ 澀谷 ➔ 原宿<br>
-                            Day 3：大船 ➔ 江之島 ➔ 鎌倉 ➔ 七里濱<br>
-                            Day 4：迪士尼樂園<br>
-                            Day 5：上野恩賜公園 ➔ 成田機場
-                        </p>
                     </div>
                 </div>
             </div>
@@ -144,7 +142,7 @@
                         </div>
                     </div>
                 </div>
-                <button @click="showAddModal = 'food'" class="fixed bottom-24 right-6 w-12 h-12 bg-orange-500 text-white rounded-full shadow-lg flex items-center justify-center text-xl z-40"><i class="fa-solid fa-plus"></i></button>
+                <button @click="showAddModal = 'food'" class="fixed bottom-24 right-6 w-12 h-12 bg-orange-500 text-white rounded-full shadow-lg flex items-center justify-center text-xl z-40 hover:scale-110 transition hover:rotate-90"><i class="fa-solid fa-plus"></i></button>
             </div>
 
             <div v-if="currentTab === 'shopping'">
@@ -254,7 +252,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // ✅ 請填入你自己的 Firebase 金鑰
+        // ✅ 填入你自己的 Firebase 金鑰
         const firebaseConfig = {
             apiKey: "AIzaSyC67N7fPsE8dHL3GMVfFpyfgrvDnE5AaVQ",
             authDomain: "hokkaido2026-b35fc.firebaseapp.com",
@@ -276,7 +274,10 @@
                     { time: "14:55", title: "抵達成田機場 T1", category: "航班", transportType: "plane", travelTime: "0m", note: "<a href='https://maps.google.com/?cid=8922499143099618300&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 機場星巴克</a> 買伯爵奶香奶茶 / 謙買馬克杯", image: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&q=80" },
                     { time: "16:00", title: "搭乘 Skyliner 前往上野", category: "交通", transportType: "subway", travelTime: "45m", note: "🚄 <b>Skyliner 推薦班次：</b><br>• 15:59 發車 ➔ 16:43 抵達<br>• 16:13 發車 ➔ 17:10 抵達<br>• 16:39 發車 ➔ 17:24 抵達<br>• 16:59 發車 ➔ 17:43 抵達", image: "https://images.unsplash.com/photo-1542044801-30d3e45ae49a?w=800&q=80" },
                     { time: "17:30", title: "上野城市酒店", category: "住宿", transportType: "walk", travelTime: "10m", note: "飯店 Check-in 放行李", image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80" },
-                    { time: "18:00", title: "阿美橫丁", category: "美食", transportType: "walk", travelTime: "5m", note: "<a href='https://maps.google.com/?cid=14312851596158016578&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 大章魚燒みなとや</a> / <a href='https://maps.google.com/?cid=3482805342400643918&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 登亭上野広小路店</a> (預約19:00)", image: "https://images.unsplash.com/photo-1505069411649-14a01c40212e?w=800&q=80" },
+                    
+                    // ❗️ 將大章魚燒與登亭分行處理，並套用清楚的區塊樣式
+                    { time: "18:00", title: "阿美橫丁", category: "美食", transportType: "walk", travelTime: "5m", note: "<a href='https://maps.google.com/?cid=14312851596158016578&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-3'><i class='fa-solid fa-map-pin'></i> 大章魚燒みなとや</a><a href='https://maps.google.com/?cid=3482805342400643918&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 登亭 上野広小路店 (預約19:00)</a>", image: "https://images.unsplash.com/photo-1505069411649-14a01c40212e?w=800&q=80" },
+                    
                     { time: "20:30", title: "唐吉訶德 上野店", category: "購物", transportType: "walk", travelTime: "10m", note: "買零食雜物，逛完回飯店休息", image: "https://images.unsplash.com/photo-1580980422998-fdf9b21ba385?w=800&q=80" }
                 ]
             },
@@ -364,7 +365,10 @@
             },
             watch: { selectedDayIndex() { this.fetchWeather(); } },
             computed: {
-                currentSchedule() { return this.scheduleData[this.selectedDayIndex] || { events: [] }; },
+                currentSchedule() { 
+                    if (this.selectedDayIndex === 'map') return { events: [] };
+                    return this.scheduleData[this.selectedDayIndex] || { events: [] }; 
+                },
                 calculatedTwd() { return Math.round(this.yenAmount * this.exchangeRate).toLocaleString(); },
                 totalExpenseTWD() { return Math.round(this.expenseList.reduce((sum, item) => sum + Number(item.amount), 0) * this.exchangeRate); },
                 filteredShoppingList() { return this.shoppingList.filter(item => item.creator === this.activeMember); },
@@ -384,7 +388,7 @@
                 getMemberTotal(name, type) { return (type==='shopping'?this.shoppingList:this.expenseList).filter(i => i.creator === name).reduce((sum, i) => sum + Number(type==='shopping'?i.price:i.amount), 0); },
                 switchTab(tab) { this.currentTab = tab; this.activeMember = null; },
                 async fetchWeather() {
-                    this.weatherLoading = true; const day = this.currentSchedule; if (!day.lat) return;
+                    this.weatherLoading = true; const day = this.currentSchedule; if (!day.lat) { this.weatherLoading = false; return; }
                     try {
                         const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${day.lat}&longitude=${day.lng}&current_weather=true`);
                         const data = await res.json();
@@ -395,7 +399,7 @@
                         this.currentWeather = { temp: w.temperature, desc: desc, icon: icon };
                     } catch(e){} finally{this.weatherLoading=false;}
                 },
-                getTabIcon(t) { return {'schedule':'fa-solid fa-map-location-dot','map':'fa-solid fa-map-marked-alt','food':'fa-solid fa-utensils','shopping':'fa-solid fa-basket-shopping','expense':'fa-solid fa-yen-sign','note':'fa-solid fa-pen-to-square'}[t]; },
+                getTabIcon(t) { return {'schedule':'fa-solid fa-map-location-dot','food':'fa-solid fa-utensils','shopping':'fa-solid fa-basket-shopping','expense':'fa-solid fa-yen-sign','note':'fa-solid fa-pen-to-square'}[t]; },
                 getTransportIcon(t) { return {'walk':'fa-solid fa-person-walking','car':'fa-solid fa-car-side','bus':'fa-solid fa-bus','subway':'fa-solid fa-train-subway','taxi':'fa-solid fa-taxi','plane':'fa-solid fa-plane-up'}[t] || 'fa-solid fa-arrow-right'; },
                 getCategoryColor(c) { return {'景點':'bg-pink-400','美食':'bg-orange-400','住宿':'bg-indigo-400','購物':'bg-yellow-400','航班':'bg-blue-400','交通':'bg-teal-500'}[c] || 'bg-gray-400'; },
                 getCategoryIcon(c) { return {'景點':'fa-solid fa-camera','美食':'fa-solid fa-utensils','住宿':'fa-solid fa-bed','購物':'fa-solid fa-bag-shopping','航班':'fa-solid fa-plane','交通':'fa-solid fa-train'}[c] || 'fa-solid fa-circle'; },
