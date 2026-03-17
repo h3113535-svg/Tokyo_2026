@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="robots" content="noindex, nofollow">
     <title>東京賞櫻 2026 🌸</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -12,7 +13,6 @@
     <style>
         body { 
             font-family: 'Noto Sans TC', sans-serif; 
-            /* 東京櫻花背景 */
             background-image: url('https://images.unsplash.com/photo-1532236204992-f5e85c0142ce?q=80&w=1920&auto=format&fit=crop');
             background-size: cover;
             background-position: center;
@@ -23,20 +23,6 @@
         .header-curve { border-bottom-left-radius: 30px; border-bottom-right-radius: 30px; }
         .fade-enter-active, .fade-leave-active { transition: opacity 0.8s; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-        /* 🌸 櫻花飄落動畫 */
-        .sakura {
-            position: absolute;
-            top: -10%;
-            color: #ffb7b2;
-            opacity: 0.8;
-            animation: fall linear infinite;
-            pointer-events: none;
-        }
-        @keyframes fall {
-            0% { top: -10%; transform: translateX(0) rotate(0deg); opacity: 0.8; }
-            100% { top: 110%; transform: translateX(50px) rotate(360deg); opacity: 0; }
-        }
     </style>
 </head>
 <body class="text-slate-600 overflow-x-hidden">
@@ -58,7 +44,7 @@
         </header>
 
         <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 flex space-x-1 z-50 bg-white/90 backdrop-blur-md px-3 py-2 rounded-full shadow-2xl border border-white/50 ring-1 ring-pink-100">
-            <button v-for="tab in ['schedule', 'map', 'food', 'shopping', 'expense', 'tools']" @click="switchTab(tab)" 
+            <button v-for="tab in ['schedule', 'map', 'food', 'shopping', 'expense', 'note']" @click="switchTab(tab)" 
                     :class="currentTab === tab ? 'bg-gradient-to-tr from-pink-400 to-pink-500 text-white shadow-lg scale-110' : 'text-slate-400 hover:text-pink-400'" 
                     class="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300">
                 <i :class="getTabIcon(tab)" class="text-lg"></i>
@@ -102,6 +88,12 @@
                                     <p class="text-[10px] text-slate-500 font-mono mb-2"><i class="fa-regular fa-clock mr-1"></i>{{ item.time }}</p>
                                     <div v-if="item.image" class="mb-2 mt-1 rounded-lg overflow-hidden h-28 w-full relative group-hover:shadow-inner transition"><img :src="item.image" class="w-full h-full object-cover transition duration-700 group-hover:scale-110"></div>
                                     <p v-if="item.note" class="text-xs text-slate-600 bg-slate-50/50 p-2 rounded-lg mb-2 border border-slate-100">{{ item.note }}</p>
+                                    
+                                    <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(item.title + ' 東京') + '&travelmode=transit'" 
+                                       target="_blank" 
+                                       class="inline-flex items-center justify-center w-full mt-2 bg-blue-50 hover:bg-blue-100 text-blue-600 text-[11px] font-bold py-2 rounded-lg transition border border-blue-100">
+                                        <i class="fa-solid fa-train-subway mr-2"></i> 路線與實時班次查詢
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -129,9 +121,7 @@
             </div>
 
             <div v-if="currentTab === 'food'">
-                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
-                    美食許願池 <i class="fa-solid fa-utensils ml-2 text-orange-400"></i>
-                </h2>
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">美食許願池 <i class="fa-solid fa-utensils ml-2 text-orange-400"></i></h2>
                 <div v-if="foodLocations.length === 0" class="text-center py-10 text-slate-400"><p>按右下角新增美食地點！</p></div>
                 <div v-for="loc in foodLocations" :key="loc" class="mb-3">
                     <div class="flex justify-between items-center bg-orange-50/80 border border-orange-100 p-3 rounded-xl cursor-pointer hover:bg-orange-100 transition" @click="toggleLocation(loc)">
@@ -158,8 +148,7 @@
                 <div v-if="!activeMember">
                     <h2 class="text-lg font-bold text-slate-800 mb-4">大家購物車 <span class="text-xs font-normal text-slate-400 ml-1">(點擊進入)</span></h2>
                     <div class="grid grid-cols-2 gap-3">
-                        <div v-for="member in familyMembers" :key="member.name" @click="activeMember = member.name" 
-                             class="bg-white/80 backdrop-blur p-5 rounded-2xl shadow-sm border border-pink-50 flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:border-pink-300 transition relative overflow-hidden">
+                        <div v-for="member in familyMembers" :key="member.name" @click="activeMember = member.name" class="bg-white/80 backdrop-blur p-5 rounded-2xl shadow-sm border border-pink-50 flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:border-pink-300 transition relative overflow-hidden">
                             <div class="w-14 h-14 rounded-full mb-2 flex items-center justify-center text-xl shadow-sm" :class="member.bg"><i :class="member.icon"></i></div>
                             <h3 class="font-bold text-slate-700 text-sm">{{ member.name }}</h3>
                             <p class="text-[10px] text-slate-400 mt-1">{{ getMemberItemCount(member.name, 'shopping') }} 項商品</p>
@@ -180,9 +169,7 @@
                         <div class="w-10 h-10 bg-slate-50 rounded-lg mr-3 flex items-center justify-center text-slate-300"><i class="fa-solid fa-gift"></i></div>
                         <div class="flex-1">
                             <h4 class="font-bold text-slate-700 text-sm" :class="{'line-through text-slate-300': item.checked}">{{ item.name }}</h4>
-                            <p class="text-xs text-slate-400">¥{{ item.price }} 
-                                <span v-if="item.recipient" class="ml-1 bg-pink-50 text-pink-500 px-2 py-0.5 rounded-full text-[9px]">給: {{ item.recipient }}</span>
-                            </p>
+                            <p class="text-xs text-slate-400">¥{{ item.price }} <span v-if="item.recipient" class="ml-1 bg-pink-50 text-pink-500 px-2 py-0.5 rounded-full text-[9px]">給: {{ item.recipient }}</span></p>
                         </div>
                         <input type="checkbox" :checked="item.checked" @change="toggleCheck(item.id, item.checked, 'shopping')" class="w-5 h-5 text-pink-500 rounded focus:ring-pink-500">
                     </div>
@@ -193,30 +180,20 @@
             <div v-if="currentTab === 'expense'">
                 <div v-if="!activeMember">
                     <div class="bg-gradient-to-br from-slate-700 to-slate-800 text-white rounded-2xl p-5 mb-6 shadow-lg text-center relative overflow-hidden">
-                        <div class="relative z-10">
-                            <p class="text-xs opacity-70 mb-1">總花費 (TWD)</p>
-                            <h3 class="text-3xl font-bold font-mono">{{ totalExpenseTWD.toLocaleString() }}</h3>
-                        </div>
+                        <div class="relative z-10"><p class="text-xs opacity-70 mb-1">總花費 (TWD)</p><h3 class="text-3xl font-bold font-mono">{{ totalExpenseTWD.toLocaleString() }}</h3></div>
                     </div>
                     <h2 class="text-lg font-bold text-slate-800 mb-3">誰付的錢？</h2>
                     <div class="grid grid-cols-2 gap-3">
-                        <div v-for="member in familyMembers" :key="member.name" @click="activeMember = member.name" 
-                             class="bg-white/80 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center cursor-pointer">
+                        <div v-for="member in familyMembers" :key="member.name" @click="activeMember = member.name" class="bg-white/80 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center cursor-pointer">
                             <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg mr-3 shadow-sm" :class="member.bg"><i :class="member.icon"></i></div>
-                            <div>
-                                <h3 class="font-bold text-sm text-slate-700">{{ member.name }}</h3>
-                                <p class="text-[10px] font-mono text-slate-400">¥{{ getMemberTotal(member.name, 'expense').toLocaleString() }}</p>
-                            </div>
+                            <div><h3 class="font-bold text-sm text-slate-700">{{ member.name }}</h3><p class="text-[10px] font-mono text-slate-400">¥{{ getMemberTotal(member.name, 'expense').toLocaleString() }}</p></div>
                         </div>
                     </div>
                 </div>
                 <div v-else>
                     <div class="flex items-center mb-4">
                         <button @click="activeMember = null" class="mr-3 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200"><i class="fa-solid fa-arrow-left"></i></button>
-                        <div>
-                            <h2 class="text-lg font-bold text-slate-800">{{ activeMember }}付的錢</h2>
-                            <p class="text-xs text-slate-400">小計: ¥{{ getMemberTotal(activeMember, 'expense').toLocaleString() }}</p>
-                        </div>
+                        <div><h2 class="text-lg font-bold text-slate-800">{{ activeMember }}付的錢</h2><p class="text-xs text-slate-400">小計: ¥{{ getMemberTotal(activeMember, 'expense').toLocaleString() }}</p></div>
                     </div>
                     <div v-for="(exp) in filteredExpenseList" :key="exp.id" class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm border border-slate-50 relative mb-2">
                         <button @click="deleteItem('expense', exp.id)" class="absolute top-2 right-2 text-[10px] text-slate-200 hover:text-red-400"><i class="fa-solid fa-trash"></i></button>
@@ -230,28 +207,15 @@
                 </div>
             </div>
 
-            <div v-if="currentTab === 'tools'">
-                <h2 class="text-lg font-bold text-slate-800 mb-4">百寶箱</h2>
-                
-                <div class="mb-5">
-                    <h3 class="font-bold text-slate-700 mb-2 text-sm"><i class="fa-solid fa-clipboard-check mr-2 text-green-500"></i>行前清單提醒</h3>
-                    <div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm text-sm text-slate-600 space-y-2">
-                        <p>🎟️ 迪士尼門票/快速通關建立群組</p>
-                        <p>🏢 SHIBUYA SKY (3/6 晚上11點搶 3/21 16:30)</p>
-                        <p>📄 預先填寫 Visit Japan Web / 買旅平險</p>
-                        <p>🔋 整理手機空間、確認行動電源規範</p>
-                        <p>📱 推薦下載：tenki(天氣), kulikuli(翻譯), tabelog(美食)</p>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-blue-50">
-                    <h3 class="font-bold text-blue-500 mb-2 text-sm"><i class="fa-solid fa-coins mr-1"></i>匯率計算</h3>
-                    <div class="flex items-center bg-blue-50/50 rounded px-2 py-1 mb-2"><span class="text-xs text-slate-400 mr-2">1 JPY =</span><input v-model="exchangeRate" type="number" step="0.001" class="w-16 text-right font-bold text-blue-600 outline-none text-sm bg-transparent"><span class="text-xs text-slate-400 ml-1">TWD</span></div>
-                    <div class="flex items-center space-x-2">
-                        <div class="flex-1"><input v-model="yenAmount" type="number" class="w-full bg-slate-100 rounded-lg p-2 outline-none font-mono text-sm"></div>
-                        <i class="fa-solid fa-arrow-right text-slate-300 text-xs"></i>
-                        <div class="flex-1"><div class="w-full bg-slate-200 rounded-lg p-2 font-mono font-bold text-slate-700 text-sm text-center">{{ calculatedTwd }}</div></div>
-                    </div>
+            <div v-if="currentTab === 'note'">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                    共用記事本 <i class="fa-solid fa-pen-to-square ml-2 text-teal-400"></i>
+                </h2>
+                <textarea v-model="notepadText" @blur="saveNote" placeholder="大家可以在這裡輸入筆記或備忘錄，離開輸入框就會自動存檔同步喔！" 
+                          class="w-full h-64 bg-white/90 p-4 rounded-xl shadow-sm border border-slate-100 outline-none resize-none text-sm text-slate-700 leading-relaxed"></textarea>
+                <div class="flex items-center justify-between mt-2 px-1">
+                    <p class="text-xs text-slate-400">💡 編輯完點擊空白處自動儲存</p>
+                    <span v-if="saveStatus" class="text-xs text-green-500 font-bold"><i class="fa-solid fa-check"></i> 已儲存</span>
                 </div>
             </div>
 
@@ -288,7 +252,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // ✅ 填入你新申請的 Firebase Config
+        // ✅ 請確認這裡填入的是你新申請的 Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyC67N7fPsE8dHL3GMVfFpyfgrvDnE5AaVQ",
             authDomain: "hokkaido2026-b35fc.firebaseapp.com",
@@ -301,7 +265,6 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
         const headerImage = "https://images.unsplash.com/photo-1532236204992-f5e85c0142ce?q=80&w=1920&auto=format&fit=crop";
 
         const scheduleData = [
@@ -309,9 +272,9 @@
                 date: "20", weekday: "Fri", location: "上野", lat: 35.7111, lng: 139.7767,
                 events: [
                     { time: "14:55", title: "抵達成田機場 T1", category: "航班", transportType: "plane", travelTime: "0m", note: "機場星巴克買伯爵奶香奶茶 / 謙買馬克杯", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80" },
-                    { time: "16:00", title: "出關與交通", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘京成電鐵 Skyliner 直達上野 (可去JR服務站領免費鑰匙圈)" },
-                    { time: "17:30", title: "上野城市酒店 Check-in", category: "住宿", transportType: "walk", travelTime: "10m", note: "放行李" },
-                    { time: "18:00", title: "阿美橫丁吃晚餐", category: "美食", transportType: "walk", travelTime: "5m", note: "大章魚燒みなとや / 登亭上野広小路店 (預約19:00)", image: "https://images.unsplash.com/photo-1542044801-30d3e45ae49a?w=800&q=80" },
+                    { time: "16:00", title: "上野站", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘京成電鐵 Skyliner 直達上野 (可去JR服務站領免費鑰匙圈)" },
+                    { time: "17:30", title: "上野城市酒店", category: "住宿", transportType: "walk", travelTime: "10m", note: "飯店 Check-in 放行李" },
+                    { time: "18:00", title: "阿美橫丁", category: "美食", transportType: "walk", travelTime: "5m", note: "大章魚燒みなとや / 登亭上野広小路店 (預約19:00)", image: "https://images.unsplash.com/photo-1542044801-30d3e45ae49a?w=800&q=80" },
                     { time: "20:30", title: "唐吉訶德 上野店", category: "購物", transportType: "walk", travelTime: "10m", note: "買零食雜物，逛完回飯店休息" }
                 ]
             },
@@ -319,44 +282,44 @@
                 date: "21", weekday: "Sat", location: "淺草/澀谷", lat: 35.7148, lng: 139.7967,
                 events: [
                     { time: "09:30", title: "淺草和服體驗", category: "景點", transportType: "subway", travelTime: "15m", note: "淺草寺參拜、求籤、買御守 / 拍櫻花晴空塔", image: "https://images.unsplash.com/photo-1570459027562-4a916cc6113f?w=800&q=80" },
-                    { time: "11:00", title: "仲見世通小吃", category: "美食", transportType: "walk", travelTime: "5m", note: "炸肉餅、菠蘿麵包、人形燒 / Yoroshi化粧堂(謙買護手霜)" },
-                    { time: "13:30", title: "歸還和服往新宿", category: "交通", transportType: "subway", travelTime: "40m", note: "淺草線(西馬込方向)至東日本橋轉新宿線至新宿三丁目" },
-                    { time: "14:30", title: "新宿逛街 & 御苑野餐", category: "購物", transportType: "walk", travelTime: "10m", note: "櫻花野餐 / lumine est / 新宿高島屋3F (俞君買Celine短夾)" },
+                    { time: "11:00", title: "仲見世通商店街", category: "美食", transportType: "walk", travelTime: "5m", note: "炸肉餅、菠蘿麵包、人形燒 / Yoroshi化粧堂(謙買護手霜)" },
+                    { time: "13:30", title: "新宿三丁目站", category: "交通", transportType: "subway", travelTime: "40m", note: "淺草線(西馬込方向)至東日本橋轉新宿線至新宿三丁目" },
+                    { time: "14:30", title: "新宿高島屋", category: "購物", transportType: "walk", travelTime: "10m", note: "櫻花野餐 / lumine est / 新宿高島屋3F (俞君買Celine短夾)" },
                     { time: "16:30", title: "澀谷 SKY", category: "景點", transportType: "subway", travelTime: "15m", note: "看夕陽夜景 (須先搶票)", image: "https://images.unsplash.com/photo-1542640244-7e672d6cb466?w=800&q=80" },
-                    { time: "17:30", title: "原宿 & 表參道", category: "購物", transportType: "subway", travelTime: "10m", note: "吉伊卡哇BAKERY/Kiddy Land/HUMAN MADE/Celine表參道店" }
+                    { time: "17:30", title: "原宿 表參道", category: "購物", transportType: "subway", travelTime: "10m", note: "吉伊卡哇BAKERY/Kiddy Land/HUMAN MADE/Celine表參道店" }
                 ]
             },
             {
                 date: "22", weekday: "Sun", location: "鎌倉", lat: 35.3181, lng: 139.5502,
                 events: [
-                    { time: "08:10", title: "上野搭車往大船", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘 JR 上野東京線" },
-                    { time: "09:10", title: "湘南單軌電車", category: "景點", transportType: "subway", travelTime: "15m", note: "搭倒吊列車(首末車廂視野最佳)至湘南江之島站，購買江之電一日券" },
-                    { time: "10:00", title: "江之島散策", category: "景點", transportType: "walk", travelTime: "15m", note: "買電梯票，參拜邊津宮、中津宮", image: "https://images.unsplash.com/photo-1502693892701-d8905307b275?w=800&q=80" },
-                    { time: "10:45", title: "魚見亭 午餐", category: "美食", transportType: "walk", travelTime: "10m", note: "懸崖邊吃魚丼看海。回程可搭接駁小船(視天氣)" },
-                    { time: "13:30", title: "鎌倉小町通 & 八幡宮", category: "景點", transportType: "subway", travelTime: "25m", note: "asagohan早餐/大佛燒/鎌倉紅谷核桃糕/錢洗弁財天(洗錢)", image: "https://images.unsplash.com/photo-1560706692-75d5b78ff56a?w=800&q=80" },
+                    { time: "08:10", title: "大船站", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘 JR 上野東京線" },
+                    { time: "09:10", title: "湘南江之島站", category: "景點", transportType: "subway", travelTime: "15m", note: "搭倒吊列車(首末車廂視野最佳)至湘南江之島站，購買江之電一日券" },
+                    { time: "10:00", title: "江之島", category: "景點", transportType: "walk", travelTime: "15m", note: "買電梯票，參拜邊津宮、中津宮", image: "https://images.unsplash.com/photo-1502693892701-d8905307b275?w=800&q=80" },
+                    { time: "10:45", title: "魚見亭", category: "美食", transportType: "walk", travelTime: "10m", note: "懸崖邊吃魚丼看海。回程可搭接駁小船(視天氣)" },
+                    { time: "13:30", title: "鎌倉小町通", category: "景點", transportType: "subway", travelTime: "25m", note: "asagohan早餐/大佛燒/鎌倉紅谷核桃糕/錢洗弁財天(洗錢)", image: "https://images.unsplash.com/photo-1560706692-75d5b78ff56a?w=800&q=80" },
                     { time: "16:30", title: "鎌倉高校前", category: "景點", transportType: "subway", travelTime: "15m", note: "平交道拍照，車站往江之島方向走300米人較少" },
-                    { time: "17:30", title: "七里濱看夕陽", category: "景點", transportType: "walk", travelTime: "15m", note: "看富士山與夕陽 (日落約17:50) / Pacific DRIVE-IN 買飲料" },
-                    { time: "19:00", title: "返回東京", category: "交通", transportType: "subway", travelTime: "60m", note: "搭 JR 橫須賀線或上野東京線回上野" }
+                    { time: "17:30", title: "七里濱", category: "景點", transportType: "walk", travelTime: "15m", note: "看富士山與夕陽 (日落約17:50) / Pacific DRIVE-IN 買飲料" },
+                    { time: "19:00", title: "上野站", category: "交通", transportType: "subway", travelTime: "60m", note: "搭 JR 橫須賀線或上野東京線回上野" }
                 ]
             },
             {
                 date: "23", weekday: "Mon", location: "迪士尼", lat: 35.6329, lng: 139.8804,
                 events: [
-                    { time: "07:30", title: "出發往迪士尼", category: "交通", transportType: "subway", travelTime: "45m", note: "日比谷線 -> 八丁堀轉車 -> JR京葉線至舞濱站" },
-                    { time: "08:30", title: "入園搶快通 PP/DPA", category: "景點", transportType: "walk", travelTime: "10m", note: "進門先搶PP與付費DPA", image: "https://images.unsplash.com/photo-1505990422501-83952ba5c2a1?w=800&q=80" },
-                    { time: "10:00", title: "設施攻略", category: "景點", transportType: "walk", travelTime: "0m", note: "怪獸電力公司、杯麵、美女與野獸、小熊維尼、飛濺山等" },
-                    { time: "15:00", title: "眾彩交融 遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "面向城堡的左側，小飛象對面" },
-                    { time: "19:45", title: "電子大遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "面向城堡的右側 (建議提前1小時佔位)" },
-                    { time: "21:00", title: "晚餐：炉端焼き ご縁もん", category: "美食", transportType: "subway", travelTime: "45m", note: "回到上野本店吃宵夜 (可先預約)" }
+                    { time: "07:30", title: "舞濱站", category: "交通", transportType: "subway", travelTime: "45m", note: "日比谷線 -> 八丁堀轉車 -> JR京葉線至舞濱站" },
+                    { time: "08:30", title: "東京迪士尼樂園", category: "景點", transportType: "walk", travelTime: "10m", note: "進門先搶PP與付費DPA", image: "https://images.unsplash.com/photo-1505990422501-83952ba5c2a1?w=800&q=80" },
+                    { time: "10:00", title: "迪士尼設施攻略", category: "景點", transportType: "walk", travelTime: "0m", note: "怪獸電力公司、杯麵、美女與野獸、小熊維尼、飛濺山等" },
+                    { time: "15:00", title: "迪士尼眾彩交融遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "面向城堡的左側，小飛象對面" },
+                    { time: "19:45", title: "迪士尼電子大遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "面向城堡的右側 (建議提前1小時佔位)" },
+                    { time: "21:00", title: "炉端焼き ご縁もん", category: "美食", transportType: "subway", travelTime: "45m", note: "回到上野本店吃宵夜 (可先預約)" }
                 ]
             },
             {
                 date: "24", weekday: "Tue", location: "成田機場", lat: 35.7720, lng: 140.3929,
                 events: [
                     { time: "07:00", title: "上野恩賜公園", category: "景點", transportType: "walk", travelTime: "10m", note: "早起散步賞櫻，回飯店 Check-out", image: "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=800&q=80" },
-                    { time: "08:20", title: "前往機場", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘 8:20 左右的京成電鐵 Skyliner 前往成田" },
-                    { time: "09:00", title: "抵達機場報到", category: "航班", transportType: "walk", travelTime: "5m", note: "虎航在 T2，與去程 T1 不同，要注意！", image: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&q=80" },
-                    { time: "11:25", title: "起飛返台", category: "航班", transportType: "plane", travelTime: "0m", note: "滿載而歸" }
+                    { time: "08:20", title: "成田機場 T2", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘 8:20 左右的京成電鐵 Skyliner 前往成田" },
+                    { time: "09:00", title: "機場報到", category: "航班", transportType: "walk", travelTime: "5m", note: "虎航在 T2，與去程 T1 不同，要注意！", image: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&q=80" },
+                    { time: "11:25", title: "桃園機場", category: "航班", transportType: "plane", travelTime: "0m", note: "滿載而歸" }
                 ]
             }
         ];
@@ -368,12 +331,13 @@
                     currentTab: 'schedule', scheduleData: scheduleData, selectedDayIndex: 0,
                     yenAmount: 1000, exchangeRate: 0.215,
                     
-                    shoppingList: [], expenseList: [], foods: [], checklist: [], tickets: [],
+                    shoppingList: [], expenseList: [], foods: [], 
+                    notepadText: '', saveStatus: false, // 記事本變數
                     loading: true, dbConnected: false,
                     
-                    activeMember: null, activeChecklistMember: null,
+                    activeMember: null,
                     showAddModal: null, newItem: { name: '', amount: '', date: '', recipient: '', location: '', type: '機票', link: '', note: '' },
-                    newChecklistItem: '', expandedLocations: {}, 
+                    expandedLocations: {}, 
 
                     familyMembers: [
                         { name: '昱融', icon: 'fa-solid fa-user', bg: 'bg-blue-100 text-blue-500' },
@@ -385,16 +349,18 @@
                 }
             },
             mounted() {
-                const refs = ['shopping', 'expenses', 'foods', 'checklist', 'tickets'];
+                const refs = ['shopping', 'expenses', 'foods', 'notepad'];
                 refs.forEach(key => {
                     onValue(ref(db, key), (s) => {
                         const d = s.val();
-                        const list = d ? Object.keys(d).map(k => ({id: k, ...d[k]})) : [];
-                        if(key === 'shopping') this.shoppingList = list;
-                        if(key === 'expenses') this.expenseList = list;
-                        if(key === 'foods') this.foods = list;
-                        if(key === 'checklist') this.checklist = list;
-                        if(key === 'tickets') this.tickets = list;
+                        if (key === 'notepad') {
+                            this.notepadText = d || '';
+                        } else {
+                            const list = d ? Object.keys(d).map(k => ({id: k, ...d[k]})) : [];
+                            if(key === 'shopping') this.shoppingList = list;
+                            if(key === 'expenses') this.expenseList = list;
+                            if(key === 'foods') this.foods = list;
+                        }
                     });
                 });
                 this.dbConnected = true;
@@ -411,12 +377,17 @@
                 foodLocations() { return [...new Set(this.foods.map(i => i.location))].sort(); }
             },
             methods: {
+                saveNote() {
+                    update(ref(db), { notepad: this.notepadText }).then(() => {
+                        this.saveStatus = true;
+                        setTimeout(() => { this.saveStatus = false; }, 2000);
+                    });
+                },
                 getFoodsByLocation(loc) { return this.foods.filter(i => i.location === loc); },
                 toggleLocation(loc) { this.expandedLocations[loc] = !this.expandedLocations[loc]; },
-                getChecklist(name) { return this.checklist.filter(i => i.owner === name); },
                 getMemberItemCount(name, type) { return (type==='shopping'?this.shoppingList:this.expenseList).filter(i => i.creator === name).length; },
                 getMemberTotal(name, type) { return (type==='shopping'?this.shoppingList:this.expenseList).filter(i => i.creator === name).reduce((sum, i) => sum + Number(type==='shopping'?i.price:i.amount), 0); },
-                switchTab(tab) { this.currentTab = tab; this.activeMember = null; this.activeChecklistMember = null; },
+                switchTab(tab) { this.currentTab = tab; this.activeMember = null; },
                 async fetchWeather() {
                     this.weatherLoading = true; const day = this.currentSchedule; if (!day.lat) return;
                     try {
@@ -429,10 +400,10 @@
                         this.currentWeather = { temp: w.temperature, desc: desc, icon: icon };
                     } catch(e){} finally{this.weatherLoading=false;}
                 },
-                getTabIcon(t) { return {'schedule':'fa-solid fa-map-location-dot','map':'fa-solid fa-map-marked-alt','food':'fa-solid fa-utensils','shopping':'fa-solid fa-basket-shopping','expense':'fa-solid fa-yen-sign','tools':'fa-solid fa-toolbox'}[t]; },
+                getTabIcon(t) { return {'schedule':'fa-solid fa-map-location-dot','map':'fa-solid fa-map-marked-alt','food':'fa-solid fa-utensils','shopping':'fa-solid fa-basket-shopping','expense':'fa-solid fa-yen-sign','note':'fa-solid fa-pen-to-square'}[t]; },
                 getTransportIcon(t) { return {'walk':'fa-solid fa-person-walking','car':'fa-solid fa-car-side','bus':'fa-solid fa-bus','subway':'fa-solid fa-train-subway','taxi':'fa-solid fa-taxi','plane':'fa-solid fa-plane-up'}[t] || 'fa-solid fa-arrow-right'; },
-                getCategoryColor(c) { return {'景點':'bg-pink-400','美食':'bg-orange-400','住宿':'bg-indigo-400','購物':'bg-yellow-400','航班':'bg-blue-400','租車':'bg-green-500'}[c] || 'bg-gray-400'; },
-                getCategoryIcon(c) { return {'景點':'fa-solid fa-camera','美食':'fa-solid fa-utensils','住宿':'fa-solid fa-bed','購物':'fa-solid fa-bag-shopping','航班':'fa-solid fa-plane','租車':'fa-solid fa-car'}[c] || 'fa-solid fa-circle'; },
+                getCategoryColor(c) { return {'景點':'bg-pink-400','美食':'bg-orange-400','住宿':'bg-indigo-400','購物':'bg-yellow-400','航班':'bg-blue-400','交通':'bg-teal-500'}[c] || 'bg-gray-400'; },
+                getCategoryIcon(c) { return {'景點':'fa-solid fa-camera','美食':'fa-solid fa-utensils','住宿':'fa-solid fa-bed','購物':'fa-solid fa-bag-shopping','航班':'fa-solid fa-plane','交通':'fa-solid fa-train'}[c] || 'fa-solid fa-circle'; },
                 closeModal() { this.showAddModal = null; this.newItem = { name:'', amount:'', date: new Date().toISOString().split('T')[0], recipient: '', location: '', type: '機票', link: '', note: '' }; },
                 confirmAdd() {
                     if (!this.newItem.name) return;
@@ -446,9 +417,9 @@
                     }
                     this.closeModal();
                 },
-                deleteItem(type, id) { if(confirm('確定刪除?')) remove(ref(db, (type==='food'?'foods/':type==='ticket'?'tickets/':type==='checklist'?'checklist/':type==='shopping'?'shopping/':'expenses/')+id)); },
+                deleteItem(type, id) { if(confirm('確定刪除?')) remove(ref(db, (type==='food'?'foods/':type==='shopping'?'shopping/':'expenses/')+id)); },
                 toggleCheck(id, s, type) { 
-                    const path = type === 'checklist' ? `checklist/${id}` : type === 'shopping' ? `shopping/${id}` : `foods/${id}`;
+                    const path = type === 'shopping' ? `shopping/${id}` : `foods/${id}`;
                     update(ref(db, path), { checked: !s }); 
                 },
                 toggleFoodCheck(id, s) { this.toggleCheck(id, s, 'food'); }
