@@ -14,9 +14,13 @@
         body { 
             font-family: 'Noto Sans TC', sans-serif; 
             background-image: url('pokemon.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-size: contain; /* 👈 將這裡改為 contain */
+            background-repeat: no-repeat; /* 👈 這一行很重要，防止圖片太小而重複填滿 */
+            background-position: top center; /* 👈 讓圖片靠上對齊，因為它是頂部橫幅 */
+            background-attachment: scroll; /* 👈 橫幅圖片通常建議隨網頁捲動 */
+    
+            /* 你可能還需要設定一個背景顏色，來填充圖片完整顯示後剩下的留白區域 */
+            background-color: #000000; /* 舉例：粉紅色，你可以改成喜歡的顏色 */
         }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
