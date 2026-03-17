@@ -215,7 +215,7 @@
                 <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
                     共用記事本 <i class="fa-solid fa-pen-to-square ml-2 text-teal-400"></i>
                 </h2>
-                <textarea v-model="notepadText" @blur="saveNote" placeholder="讀取中，或輸入備忘錄..." 
+                <textarea v-model="notepadText" @blur="saveNote" placeholder="大家可以在這裡輸入筆記或備忘錄，離開輸入框就會自動存檔同步喔！" 
                           class="w-full h-96 bg-white/90 p-4 rounded-xl shadow-sm border border-slate-100 outline-none resize-none text-sm text-slate-700 leading-relaxed"></textarea>
                 <div class="flex items-center justify-between mt-2 px-1">
                     <p class="text-xs text-slate-400">💡 編輯完點擊空白處即可自動儲存</p>
@@ -255,22 +255,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // ✅ 填入你自己的 Firebase 金鑰
-        const firebaseConfig = {
-            apiKey: "AIzaSyC67N7fPsE8dHL3GMVfFpyfgrvDnE5AaVQ",
-            authDomain: "hokkaido2026-b35fc.firebaseapp.com",
-            databaseURL: "https://hokkaido2026-b35fc-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "hokkaido2026-b35fc",
-            storageBucket: "hokkaido2026-b35fc.firebasestorage.app",
-            messagingSenderId: "553111751124",
-            appId: "1:553111751124:web:e15688b7b8966926882e41"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const headerImage = "https://images.unsplash.com/photo-1532236204992-f5e85c0142ce?q=80&w=1920&auto=format&fit=crop";
-
-        // 預設記事本內容
+        // ❗️預設記事本內容直接定義在這裡，確保載入瞬間顯示❗️
         const defaultNotepadText = `【行前準備與清單】
 🎫 迪士尼門票/快速通關建立群組
 📄 預先填寫 Visit Japan Web
@@ -303,6 +288,21 @@
 ① 鎌倉站搭 JR 橫須賀線 / 東海道線 → 大船站 (約6~10分)
 ② JR大船站跟指標走 → 搭湘南單軌電車 → 湘南江之島站 (約14分)
 ③ 出站步行 5~7 分鐘抵達江之島入口`;
+
+        // ✅ 請填入你自己的 Firebase 金鑰
+        const firebaseConfig = {
+            apiKey: "AIzaSyC67N7fPsE8dHL3GMVfFpyfgrvDnE5AaVQ",
+            authDomain: "hokkaido2026-b35fc.firebaseapp.com",
+            databaseURL: "https://hokkaido2026-b35fc-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "hokkaido2026-b35fc",
+            storageBucket: "hokkaido2026-b35fc.firebasestorage.app",
+            messagingSenderId: "553111751124",
+            appId: "1:553111751124:web:e15688b7b8966926882e41"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const headerImage = "https://images.unsplash.com/photo-1532236204992-f5e85c0142ce?q=80&w=1920&auto=format&fit=crop";
 
         const scheduleData = [
             {
@@ -370,7 +370,9 @@
                     headerImage: headerImage,
                     currentTab: 'schedule', scheduleData: scheduleData, selectedDayIndex: 0,
                     yenAmount: 1000, exchangeRate: 0.215,
-                    shoppingList: [], expenseList: [], foods: [], notepadText: '', saveStatus: false, 
+                    shoppingList: [], expenseList: [], foods: [], 
+                    notepadText: defaultNotepadText, // 預設即寫入，避免載入空白
+                    saveStatus: false, 
                     loading: true, dbConnected: false, activeMember: null,
                     showAddModal: null, newItem: { name: '', amount: '', date: '', recipient: '', location: '', type: '機票', link: '', note: '' },
                     expandedLocations: {}, 
@@ -387,8 +389,10 @@
                     onValue(ref(db, key), (s) => {
                         const d = s.val();
                         if (key === 'notepad') {
-                            // 如果資料庫是空的，就顯示預設的注意事項內容
-                            this.notepadText = d || defaultNotepadText;
+                            // 確保如果有資料且不為空，才覆蓋預設文字
+                            if (d && d.trim() !== '') {
+                                this.notepadText = d;
+                            }
                         } else {
                             const list = d ? Object.keys(d).map(k => ({id: k, ...d[k]})) : [];
                             if(key === 'shopping') this.shoppingList = list;
