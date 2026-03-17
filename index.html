@@ -91,8 +91,9 @@
                                     
                                     <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(item.title + ' 東京') + '&travelmode=transit'" 
                                        target="_blank" 
-                                       class="inline-flex items-center justify-center w-full mt-2 bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-bold py-3 rounded-xl shadow-sm transition-all active:scale-95 border border-blue-100">
-                                        <i class="fa-solid fa-train-subway mr-2"></i> 路線與實時班次查詢
+                                       class="flex items-center justify-center w-full mt-3 bg-blue-50/80 hover:bg-blue-100 text-blue-600 text-xs font-bold py-3 px-4 rounded-xl shadow-sm transition-all active:scale-95 border border-blue-200">
+                                        <i class="fa-solid fa-train-subway mr-2 text-lg"></i> 
+                                        <span class="tracking-wide">路線與實時班次查詢</span>
                                     </a>
                                 </div>
                             </div>
@@ -146,7 +147,7 @@
 
             <div v-if="currentTab === 'shopping'">
                 <div v-if="!activeMember">
-                    <h2 class="text-lg font-bold text-slate-800 mb-4">大家購物車 <span class="text-xs font-normal text-slate-400 ml-1">(點擊進入)</span></h2>
+                    <h2 class="text-lg font-bold text-slate-800 mb-4">專屬購物車 <span class="text-xs font-normal text-slate-400 ml-1">(點擊進入)</span></h2>
                     <div class="grid grid-cols-2 gap-3">
                         <div v-for="member in familyMembers" :key="member.name" @click="activeMember = member.name" class="bg-white/80 backdrop-blur p-5 rounded-2xl shadow-sm border border-pink-50 flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:border-pink-300 transition relative overflow-hidden">
                             <div class="w-14 h-14 rounded-full mb-2 flex items-center justify-center text-xl shadow-sm" :class="member.bg"><i :class="member.icon"></i></div>
@@ -159,7 +160,7 @@
                     <div class="flex items-center mb-4">
                         <button @click="activeMember = null" class="mr-3 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200"><i class="fa-solid fa-arrow-left"></i></button>
                         <div>
-                            <h2 class="text-lg font-bold text-slate-800">{{ activeMember }}的願望</h2>
+                            <h2 class="text-lg font-bold text-slate-800">{{ activeMember }}的清單</h2>
                             <p class="text-xs text-slate-400">總預算: ¥{{ getMemberTotal(activeMember, 'shopping').toLocaleString() }}</p>
                         </div>
                     </div>
@@ -252,7 +253,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // ✅ 請確認這裡填入的是你新申請的 Firebase Config
+        // ✅ 務必確認這裡是填寫你申請的 Tokyo_2026 Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyC67N7fPsE8dHL3GMVfFpyfgrvDnE5AaVQ",
             authDomain: "hokkaido2026-b35fc.firebaseapp.com",
@@ -271,55 +272,55 @@
             {
                 date: "20", weekday: "Fri", location: "上野", lat: 35.7111, lng: 139.7767,
                 events: [
-                    { time: "14:55", title: "抵達成田機場 T1", category: "航班", transportType: "plane", travelTime: "0m", note: "機場星巴克買伯爵奶香奶茶 / 謙買馬克杯", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80" },
-                    { time: "16:00", title: "上野站", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘京成電鐵 Skyliner 直達上野 (可去JR服務站領免費鑰匙圈)" },
-                    { time: "17:30", title: "上野城市酒店", category: "住宿", transportType: "walk", travelTime: "10m", note: "飯店 Check-in 放行李" },
-                    { time: "18:00", title: "阿美橫丁", category: "美食", transportType: "walk", travelTime: "5m", note: "大章魚燒みなとや / 登亭上野広小路店 (預約19:00)", image: "https://images.unsplash.com/photo-1542044801-30d3e45ae49a?w=800&q=80" },
-                    { time: "20:30", title: "唐吉訶德 上野店", category: "購物", transportType: "walk", travelTime: "10m", note: "買零食雜物，逛完回飯店休息" }
+                    { time: "14:55", title: "抵達成田機場 T1", category: "航班", transportType: "plane", travelTime: "0m", note: "機場星巴克買伯爵奶香奶茶 / 謙買馬克杯", image: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&q=80" },
+                    { time: "16:00", title: "上野站", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘京成電鐵 Skyliner 直達上野", image: "https://images.unsplash.com/photo-1542044801-30d3e45ae49a?w=800&q=80" },
+                    { time: "17:30", title: "上野城市酒店", category: "住宿", transportType: "walk", travelTime: "10m", note: "飯店 Check-in 放行李", image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80" },
+                    { time: "18:00", title: "阿美橫丁", category: "美食", transportType: "walk", travelTime: "5m", note: "大章魚燒みなとや / 登亭上野広小路店", image: "https://images.unsplash.com/photo-1505069411649-14a01c40212e?w=800&q=80" },
+                    { time: "20:30", title: "唐吉訶德 上野店", category: "購物", transportType: "walk", travelTime: "10m", note: "買零食雜物，逛完回飯店休息", image: "https://images.unsplash.com/photo-1580980422998-fdf9b21ba385?w=800&q=80" }
                 ]
             },
             {
                 date: "21", weekday: "Sat", location: "淺草/澀谷", lat: 35.7148, lng: 139.7967,
                 events: [
-                    { time: "09:30", title: "淺草和服體驗", category: "景點", transportType: "subway", travelTime: "15m", note: "淺草寺參拜、求籤、買御守 / 拍櫻花晴空塔", image: "https://images.unsplash.com/photo-1570459027562-4a916cc6113f?w=800&q=80" },
-                    { time: "11:00", title: "仲見世通商店街", category: "美食", transportType: "walk", travelTime: "5m", note: "炸肉餅、菠蘿麵包、人形燒 / Yoroshi化粧堂(謙買護手霜)" },
-                    { time: "13:30", title: "新宿三丁目站", category: "交通", transportType: "subway", travelTime: "40m", note: "淺草線(西馬込方向)至東日本橋轉新宿線至新宿三丁目" },
-                    { time: "14:30", title: "新宿高島屋", category: "購物", transportType: "walk", travelTime: "10m", note: "櫻花野餐 / lumine est / 新宿高島屋3F (俞君買Celine短夾)" },
-                    { time: "16:30", title: "澀谷 SKY", category: "景點", transportType: "subway", travelTime: "15m", note: "看夕陽夜景 (須先搶票)", image: "https://images.unsplash.com/photo-1542640244-7e672d6cb466?w=800&q=80" },
-                    { time: "17:30", title: "原宿 表參道", category: "購物", transportType: "subway", travelTime: "10m", note: "吉伊卡哇BAKERY/Kiddy Land/HUMAN MADE/Celine表參道店" }
+                    { time: "09:30", title: "淺草和服體驗", category: "景點", transportType: "subway", travelTime: "15m", note: "淺草寺參拜、求籤、買御守 / 拍櫻花", image: "https://images.unsplash.com/photo-1570459027562-4a916cc6113f?w=800&q=80" },
+                    { time: "11:00", title: "仲見世通商店街", category: "美食", transportType: "walk", travelTime: "5m", note: "炸肉餅、菠蘿麵包、人形燒", image: "https://images.unsplash.com/photo-1590251783301-705b76fbd8cf?w=800&q=80" },
+                    { time: "13:30", title: "新宿三丁目站", category: "交通", transportType: "subway", travelTime: "40m", note: "歸還和服後搭車至新宿", image: "https://images.unsplash.com/photo-1533050487297-09b450131914?w=800&q=80" },
+                    { time: "14:30", title: "新宿高島屋", category: "購物", transportType: "walk", travelTime: "10m", note: "櫻花野餐 / lumine est / 俞君買Celine短夾", image: "https://images.unsplash.com/photo-1554797589-7241f4bce47b?w=800&q=80" },
+                    { time: "16:30", title: "澀谷 SKY", category: "景點", transportType: "subway", travelTime: "15m", note: "看夕陽夜景", image: "https://images.unsplash.com/photo-1542640244-7e672d6cb466?w=800&q=80" },
+                    { time: "17:30", title: "原宿 表參道", category: "購物", transportType: "subway", travelTime: "10m", note: "吉伊卡哇BAKERY/Kiddy Land/Celine", image: "https://images.unsplash.com/photo-1578345218746-50a26fba5a83?w=800&q=80" }
                 ]
             },
             {
                 date: "22", weekday: "Sun", location: "鎌倉", lat: 35.3181, lng: 139.5502,
                 events: [
-                    { time: "08:10", title: "大船站", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘 JR 上野東京線" },
-                    { time: "09:10", title: "湘南江之島站", category: "景點", transportType: "subway", travelTime: "15m", note: "搭倒吊列車(首末車廂視野最佳)至湘南江之島站，購買江之電一日券" },
-                    { time: "10:00", title: "江之島", category: "景點", transportType: "walk", travelTime: "15m", note: "買電梯票，參拜邊津宮、中津宮", image: "https://images.unsplash.com/photo-1502693892701-d8905307b275?w=800&q=80" },
-                    { time: "10:45", title: "魚見亭", category: "美食", transportType: "walk", travelTime: "10m", note: "懸崖邊吃魚丼看海。回程可搭接駁小船(視天氣)" },
-                    { time: "13:30", title: "鎌倉小町通", category: "景點", transportType: "subway", travelTime: "25m", note: "asagohan早餐/大佛燒/鎌倉紅谷核桃糕/錢洗弁財天(洗錢)", image: "https://images.unsplash.com/photo-1560706692-75d5b78ff56a?w=800&q=80" },
-                    { time: "16:30", title: "鎌倉高校前", category: "景點", transportType: "subway", travelTime: "15m", note: "平交道拍照，車站往江之島方向走300米人較少" },
-                    { time: "17:30", title: "七里濱", category: "景點", transportType: "walk", travelTime: "15m", note: "看富士山與夕陽 (日落約17:50) / Pacific DRIVE-IN 買飲料" },
-                    { time: "19:00", title: "上野站", category: "交通", transportType: "subway", travelTime: "60m", note: "搭 JR 橫須賀線或上野東京線回上野" }
+                    { time: "08:10", title: "大船站", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘 JR 上野東京線", image: "https://images.unsplash.com/photo-1557800636-894a64c1696f?w=800&q=80" },
+                    { time: "09:10", title: "湘南江之島站", category: "景點", transportType: "subway", travelTime: "15m", note: "搭倒吊單軌列車，買江之電一日券", image: "https://images.unsplash.com/photo-1560706692-75d5b78ff56a?w=800&q=80" },
+                    { time: "10:00", title: "江之島", category: "景點", transportType: "walk", travelTime: "15m", note: "參拜邊津宮、中津宮", image: "https://images.unsplash.com/photo-1502693892701-d8905307b275?w=800&q=80" },
+                    { time: "10:45", title: "魚見亭", category: "美食", transportType: "walk", travelTime: "10m", note: "懸崖邊吃魚丼看海", image: "https://images.unsplash.com/photo-1511690078903-71dc5a49f5e3?w=800&q=80" },
+                    { time: "13:30", title: "鎌倉小町通", category: "景點", transportType: "subway", travelTime: "25m", note: "大佛燒/鎌倉紅谷核桃糕", image: "https://images.unsplash.com/photo-1549454124-7eb326fc6e24?w=800&q=80" },
+                    { time: "16:30", title: "鎌倉高校前", category: "景點", transportType: "subway", travelTime: "15m", note: "知名平交道打卡", image: "https://images.unsplash.com/photo-1627914902146-538a7c2cdbd9?w=800&q=80" },
+                    { time: "17:30", title: "七里濱", category: "景點", transportType: "walk", travelTime: "15m", note: "看富士山與夕陽 / Pacific DRIVE-IN", image: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=800&q=80" },
+                    { time: "19:00", title: "上野站", category: "交通", transportType: "subway", travelTime: "60m", note: "搭 JR 橫須賀線回上野", image: "https://images.unsplash.com/photo-1520301255226-bf5f144451c1?w=800&q=80" }
                 ]
             },
             {
                 date: "23", weekday: "Mon", location: "迪士尼", lat: 35.6329, lng: 139.8804,
                 events: [
-                    { time: "07:30", title: "舞濱站", category: "交通", transportType: "subway", travelTime: "45m", note: "日比谷線 -> 八丁堀轉車 -> JR京葉線至舞濱站" },
+                    { time: "07:30", title: "舞濱站", category: "交通", transportType: "subway", travelTime: "45m", note: "日比谷線 -> 八丁堀轉車 -> JR京葉線", image: "https://images.unsplash.com/photo-1582200216428-212d1c1bd560?w=800&q=80" },
                     { time: "08:30", title: "東京迪士尼樂園", category: "景點", transportType: "walk", travelTime: "10m", note: "進門先搶PP與付費DPA", image: "https://images.unsplash.com/photo-1505990422501-83952ba5c2a1?w=800&q=80" },
-                    { time: "10:00", title: "迪士尼設施攻略", category: "景點", transportType: "walk", travelTime: "0m", note: "怪獸電力公司、杯麵、美女與野獸、小熊維尼、飛濺山等" },
-                    { time: "15:00", title: "迪士尼眾彩交融遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "面向城堡的左側，小飛象對面" },
-                    { time: "19:45", title: "迪士尼電子大遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "面向城堡的右側 (建議提前1小時佔位)" },
-                    { time: "21:00", title: "炉端焼き ご縁もん", category: "美食", transportType: "subway", travelTime: "45m", note: "回到上野本店吃宵夜 (可先預約)" }
+                    { time: "10:00", title: "迪士尼設施攻略", category: "景點", transportType: "walk", travelTime: "0m", note: "怪獸電力公司、美女與野獸、飛濺山等", image: "https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=800&q=80" },
+                    { time: "15:00", title: "眾彩交融遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "面向城堡的左側，小飛象對面", image: "https://images.unsplash.com/photo-1530263666993-9c59573887c3?w=800&q=80" },
+                    { time: "19:45", title: "電子大遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "面向城堡的右側 (建議提前1小時佔位)", image: "https://images.unsplash.com/photo-1514316454349-750c2f8251e5?w=800&q=80" },
+                    { time: "21:00", title: "炉端焼き ご縁もん", category: "美食", transportType: "subway", travelTime: "45m", note: "回到上野本店吃宵夜 (可先預約)", image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80" }
                 ]
             },
             {
                 date: "24", weekday: "Tue", location: "成田機場", lat: 35.7720, lng: 140.3929,
                 events: [
                     { time: "07:00", title: "上野恩賜公園", category: "景點", transportType: "walk", travelTime: "10m", note: "早起散步賞櫻，回飯店 Check-out", image: "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=800&q=80" },
-                    { time: "08:20", title: "成田機場 T2", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘 8:20 左右的京成電鐵 Skyliner 前往成田" },
-                    { time: "09:00", title: "機場報到", category: "航班", transportType: "walk", travelTime: "5m", note: "虎航在 T2，與去程 T1 不同，要注意！", image: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&q=80" },
-                    { time: "11:25", title: "桃園機場", category: "航班", transportType: "plane", travelTime: "0m", note: "滿載而歸" }
+                    { time: "08:20", title: "成田機場 T2", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘 8:20 京成電鐵 Skyliner", image: "https://images.unsplash.com/photo-1524168285510-cb83713f0099?w=800&q=80" },
+                    { time: "09:00", title: "機場報到", category: "航班", transportType: "walk", travelTime: "5m", note: "虎航在 T2，與去程 T1 不同！", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80" },
+                    { time: "11:25", title: "桃園機場", category: "航班", transportType: "plane", travelTime: "0m", note: "滿載而歸", image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&q=80" }
                 ]
             }
         ];
@@ -332,16 +333,17 @@
                     yenAmount: 1000, exchangeRate: 0.215,
                     
                     shoppingList: [], expenseList: [], foods: [], 
-                    notepadText: '', saveStatus: false, // 記事本變數
+                    notepadText: '', saveStatus: false, 
                     loading: true, dbConnected: false,
                     
                     activeMember: null,
                     showAddModal: null, newItem: { name: '', amount: '', date: '', recipient: '', location: '', type: '機票', link: '', note: '' },
                     expandedLocations: {}, 
 
+                    // ✅ 成員名單已精簡為俞君與謙
                     familyMembers: [
                         { name: '俞君', icon: 'fa-solid fa-user-astronaut', bg: 'bg-pink-100 text-pink-500' },
-                        { name: '謙', icon: 'fa-solid fa-user-ninja', bg: 'bg-green-100 text-green-500' },
+                        { name: '謙', icon: 'fa-solid fa-user-ninja', bg: 'bg-green-100 text-green-500' }
                     ],
                     weatherLoading: false, currentWeather: { temp: '--', desc: '載入中', icon: 'fa-solid fa-cloud' }
                 }
