@@ -153,7 +153,7 @@
                     <h2 class="text-lg font-bold text-slate-800 mb-4">專屬購物車 <span class="text-xs font-normal text-slate-400 ml-1">(點擊進入)</span></h2>
                     <div class="grid grid-cols-2 gap-3">
                         <div v-for="member in familyMembers" :key="member.name" @click="activeMember = member.name" class="bg-white/80 backdrop-blur p-5 rounded-2xl shadow-sm border border-pink-50 flex flex-col items-center justify-center cursor-pointer hover:shadow-md hover:border-pink-300 transition relative overflow-hidden">
-                            <div class="w-14 h-14 rounded-full mb-2 flex items-center justify-center text-xl shadow-sm" :class="member.bg"><i :class="member.icon"></i></div>
+                           <div class="w-14 h-14 rounded-full mb-2 flex items-center justify-center text-xl shadow-sm border-2 border-white bg-white overflow-hidden" :class="member.bg"> <img v-if="member.image" :src="member.image" class="w-full h-full object-cover"> </div>
                             <h3 class="font-bold text-slate-700 text-sm">{{ member.name }}</h3>
                             <p class="text-[10px] text-slate-400 mt-1">{{ getMemberItemCount(member.name, 'shopping') }} 項商品</p>
                         </div>
@@ -189,7 +189,7 @@
                     <h2 class="text-lg font-bold text-slate-800 mb-3">誰付的錢？</h2>
                     <div class="grid grid-cols-2 gap-3 mb-6">
                         <div v-for="member in familyMembers" :key="member.name" @click="activeMember = member.name" class="bg-white/80 p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center cursor-pointer">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg mr-3 shadow-sm" :class="member.bg"><i :class="member.icon"></i></div>
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg mr-3 shadow-sm border-2 border-white bg-white overflow-hidden" :class="member.bg"> <img v-if="member.image" :src="member.image" class="w-full h-full object-cover"> </div>
                             <div><h3 class="font-bold text-sm text-slate-700">{{ member.name }}</h3><p class="text-[10px] font-mono text-slate-400">¥{{ getMemberTotal(member.name, 'expense').toLocaleString() }}</p></div>
                         </div>
                     </div>
@@ -417,8 +417,8 @@
                     showAddModal: null, newItem: { name: '', amount: '', date: '', recipient: '', location: '', type: '機票', link: '', note: '' },
                     expandedLocations: {}, 
                     familyMembers: [
-                        { name: '俞君', image: 'y.jpg'  },
-                        { name: '謙', image: 'c.jpg' }
+                        { name: '俞君', image: 'y.jpg', bg: 'bg-pink-100 text-pink-500' },
+                        { name: '謙', image: 'c.jpg', bg: 'bg-green-100 text-green-500' }
                     ],
                     weatherLoading: false, currentWeather: { temp: '--', desc: '載入中', icon: 'fa-solid fa-cloud' }
                 }
