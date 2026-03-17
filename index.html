@@ -29,7 +29,7 @@
 </head>
 <body class="text-slate-600 overflow-x-hidden">
 
-    <div id="app" class="max-w-md mx-auto bg-white/90 backdrop-blur-sm min-h-screen shadow-2xl relative pb-24">
+    <div id="app" class="max-w-md mx-auto bg-white/30 backdrop-blur-sm min-h-screen shadow-2xl relative pb-24">
         
         <header class="relative z-10">
             <div class="h-[170px] w-full header-curve overflow-hidden relative shadow-md" style="background-color: #ffffff;">
@@ -75,7 +75,7 @@
                 </div>
 
                 <div v-if="selectedDayIndex === 'map'" class="animate-fade-in mt-4">
-                    <img src="YOUR_IMAGE_URL_HERE" alt="東京行程總覽圖" class="w-full h-auto rounded-xl shadow-sm border border-slate-100">
+                    <img src="Schedule.png" alt="東京行程總覽圖" class="w-full h-auto rounded-xl shadow-sm border border-slate-100">
                     <p class="text-center text-xs text-slate-400 mt-3">💡 點擊上方的日期即可返回每日行程表</p>
                 </div>
 
@@ -326,7 +326,7 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const headerImage = "https://images.unsplash.com/photo-1532236204992-f5e85c0142ce?q=80&w=1920&auto=format&fit=crop";
+        const headerImage = "Home.png";
 
         const scheduleData = [
             {
