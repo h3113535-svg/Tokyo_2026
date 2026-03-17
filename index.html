@@ -13,14 +13,10 @@
     <style>
         body { 
             font-family: 'Noto Sans TC', sans-serif; 
-            background-image: url('pokemon.jpg');
-            background-size: contain; /* 👈 將這裡改為 contain */
-            background-repeat: no-repeat; /* 👈 這一行很重要，防止圖片太小而重複填滿 */
-            background-position: top center; /* 👈 讓圖片靠上對齊，因為它是頂部橫幅 */
-            background-attachment: scroll; /* 👈 橫幅圖片通常建議隨網頁捲動 */
-    
-            /* 你可能還需要設定一個背景顏色，來填充圖片完整顯示後剩下的留白區域 */
-            background-color: #ffffff; /* 舉例：粉紅色，你可以改成喜歡的顏色 */
+            background-image: url('https://images.unsplash.com/photo-1532236204992-f5e85c0142ce?q=80&w=1920&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -36,13 +32,13 @@
     <div id="app" class="max-w-md mx-auto bg-white/90 backdrop-blur-sm min-h-screen shadow-2xl relative pb-24">
         
         <header class="relative z-10">
-            <div class="h-[170px] w-full bg-white header-curve overflow-hidden relative shadow-md">
-                <img :src="headerImage" class="w-full h-full object-contain  bg-white opacity-90 transition duration-1000 hover:scale-105">
-                <div class="absolute bottom-6 left-6 text-pink-500">
-                    <h1 class="text-xl font-bold tracking-widest drop-shadow-md">東京 2026</h1>
-                    <p class="text-xs font-light tracking-wider drop-shadow-md opacity-90">櫻花與迪士尼樂園之旅 🌸</p>
+            <div class="h-[170px] w-full header-curve overflow-hidden relative shadow-md" style="background-color: #ffffff;">
+                <img :src="headerImage" style="background-color: #ffffff;" class="w-full h-full object-contain object-center opacity-90 transition duration-1000 hover:scale-105">
+                <div class="absolute bottom-6 left-6 text-slate-700">
+                    <h1 class="text-2xl font-bold tracking-widest drop-shadow-sm">東京 2026</h1>
+                    <p class="text-xs font-medium tracking-wider drop-shadow-sm opacity-80">櫻花與樂園之旅 🌸</p>
                 </div>
-                <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-md text-white text-[10px] px-3 py-1 rounded-full flex items-center border border-white/30 shadow-sm">
+                <div class="absolute top-4 right-4 bg-slate-100/80 backdrop-blur-md text-slate-600 text-[10px] px-3 py-1 rounded-full flex items-center border border-slate-200 shadow-sm">
                     <div class="w-2 h-2 rounded-full mr-2" :class="dbConnected ? 'bg-green-400' : 'bg-red-400 animate-pulse'"></div>
                     {{ dbConnected ? '已連線' : '連線中' }}
                 </div>
@@ -256,7 +252,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // ✅ 填入你自己的 Firebase 金鑰
+        // ✅ 請填入你的 Firebase 金鑰
         const firebaseConfig = {
             apiKey: "AIzaSyC67N7fPsE8dHL3GMVfFpyfgrvDnE5AaVQ",
             authDomain: "hokkaido2026-b35fc.firebaseapp.com",
@@ -269,64 +265,61 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const headerImage = "pokemon.jpg";
+        const headerImage = "https://images.unsplash.com/photo-1532236204992-f5e85c0142ce?q=80&w=1920&auto=format&fit=crop";
 
         const scheduleData = [
             {
                 date: "20", weekday: "Fri", location: "上野", lat: 35.7111, lng: 139.7767,
                 events: [
-                    { time: "14:55", title: "抵達成田機場 T1", category: "航班", transportType: "plane", travelTime: "0m", note: "<a href='https://maps.google.com/?cid=8922499143099618300&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 機場星巴克</a> 買伯爵奶香奶茶 / 謙買馬克杯", image: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&q=80" },
+                    { time: "14:55", title: "抵達成田機場 T1", category: "航班", transportType: "plane", travelTime: "0m", note: "<a href='https://maps.google.com/?cid=8922499143099618300&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-1'><i class='fa-solid fa-map-pin'></i> 機場星巴克 (買伯爵奶香奶茶)</a>☕ 謙買馬克杯", image: "https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=800&q=80" },
                     { time: "16:00", title: "搭乘 Skyliner 前往上野", category: "交通", transportType: "subway", travelTime: "45m", note: "🚄 <b>Skyliner 推薦班次：</b><br>• 15:59 發車 ➔ 16:43 抵達<br>• 16:13 發車 ➔ 17:10 抵達<br>• 16:39 發車 ➔ 17:24 抵達<br>• 16:59 發車 ➔ 17:43 抵達", image: "https://images.unsplash.com/photo-1542044801-30d3e45ae49a?w=800&q=80" },
-                    { time: "17:30", title: "上野城市酒店", category: "住宿", transportType: "walk", travelTime: "10m", note: "飯店 Check-in 放行李", image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80" },
-                    
-                    // ❗️ 將大章魚燒與登亭分行處理，並套用清楚的區塊樣式
-                    { time: "18:00", title: "阿美橫丁", category: "美食", transportType: "walk", travelTime: "5m", note: "<a href='https://maps.google.com/?cid=14312851596158016578&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-3'><i class='fa-solid fa-map-pin'></i> 大章魚燒みなとや</a><a href='https://maps.google.com/?cid=3482805342400643918&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 登亭 上野広小路店 (預約19:00)</a>", image: "https://images.unsplash.com/photo-1505069411649-14a01c40212e?w=800&q=80" },
-                    
-                    { time: "20:30", title: "唐吉訶德 上野店", category: "購物", transportType: "walk", travelTime: "10m", note: "買零食雜物，逛完回飯店休息", image: "https://images.unsplash.com/photo-1580980422998-fdf9b21ba385?w=800&q=80" }
+                    { time: "17:30", title: "上野城市酒店", category: "住宿", transportType: "walk", travelTime: "10m", note: "🏨 飯店 Check-in 放行李", image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=800&q=80" },
+                    { time: "18:00", title: "阿美橫丁", category: "美食", transportType: "walk", travelTime: "5m", note: "<a href='https://maps.google.com/?cid=14312851596158016578&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-2'><i class='fa-solid fa-map-pin'></i> 大章魚燒みなとや</a><a href='https://maps.google.com/?cid=3482805342400643918&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 登亭 上野広小路店 (預約19:00)</a>", image: "https://images.unsplash.com/photo-1505069411649-14a01c40212e?w=800&q=80" },
+                    { time: "20:30", title: "唐吉訶德 上野店", category: "購物", transportType: "walk", travelTime: "10m", note: "🛒 買零食雜物<br>💤 逛完回飯店休息", image: "https://images.unsplash.com/photo-1580980422998-fdf9b21ba385?w=800&q=80" }
                 ]
             },
             {
                 date: "21", weekday: "Sat", location: "淺草/澀谷", lat: 35.7148, lng: 139.7967,
                 events: [
-                    { time: "09:30", title: "淺草和服體驗", category: "景點", transportType: "subway", travelTime: "15m", note: "<a href='https://maps.google.com/?cid=7785923974874169613&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 淺草寺</a> 參拜、求籤、買御守 / 拍櫻花", image: "https://images.unsplash.com/photo-1570459027562-4a916cc6113f?w=800&q=80" },
-                    { time: "11:00", title: "仲見世通商店街", category: "美食", transportType: "walk", travelTime: "5m", note: "炸肉餅、菠蘿麵包、人形燒 / Yoroshi化粧堂(謙買護手霜)", image: "https://images.unsplash.com/photo-1590251783301-705b76fbd8cf?w=800&q=80" },
-                    { time: "13:30", title: "往新宿站", category: "交通", transportType: "subway", travelTime: "40m", note: "淺草線(西馬込方向)至東日本橋轉新宿線至新宿三丁目", image: "https://images.unsplash.com/photo-1533050487297-09b450131914?w=800&q=80" },
-                    { time: "14:30", title: "新宿高島屋", category: "購物", transportType: "walk", travelTime: "10m", note: "櫻花野餐 / lumine est / <a href='https://maps.google.com/?cid=9702424083992202049&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 新宿高島屋3F</a> (俞君買Celine短夾)", image: "https://images.unsplash.com/photo-1554797589-7241f4bce47b?w=800&q=80" },
-                    { time: "16:30", title: "澀谷 SKY", category: "景點", transportType: "subway", travelTime: "15m", note: "<a href='https://maps.google.com/?cid=8067212359343678579&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> SHIBUYA SKY</a> 看夕陽夜景 (須先搶票)", image: "https://images.unsplash.com/photo-1542640244-7e672d6cb466?w=800&q=80" },
-                    { time: "17:30", title: "原宿 表參道", category: "購物", transportType: "subway", travelTime: "10m", note: "吉伊卡哇BAKERY/Kiddy Land/Celine", image: "https://images.unsplash.com/photo-1578345218746-50a26fba5a83?w=800&q=80" }
+                    { time: "09:30", title: "淺草和服體驗", category: "景點", transportType: "subway", travelTime: "15m", note: "<a href='https://maps.google.com/?cid=7785923974874169613&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-1'><i class='fa-solid fa-map-pin'></i> 淺草寺</a>🙏 參拜、求籤、買御守<br>🌸 拍櫻花", image: "https://images.unsplash.com/photo-1570459027562-4a916cc6113f?w=800&q=80" },
+                    { time: "11:00", title: "仲見世通商店街", category: "美食", transportType: "walk", travelTime: "5m", note: "🍡 炸肉餅、菠蘿麵包、人形燒<br><a href='http://googleusercontent.com/maps.google.com/yoroshi' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mt-1'><i class='fa-solid fa-map-pin'></i> Yoroshi化粧堂 (謙買護手霜)</a>", image: "https://images.unsplash.com/photo-1590251783301-705b76fbd8cf?w=800&q=80" },
+                    { time: "13:30", title: "往新宿站", category: "交通", transportType: "subway", travelTime: "40m", note: "🚇 淺草線(西馬込方向)至東日本橋<br>🚇 轉新宿線至新宿三丁目", image: "https://images.unsplash.com/photo-1533050487297-09b450131914?w=800&q=80" },
+                    { time: "14:30", title: "新宿高島屋", category: "購物", transportType: "walk", travelTime: "10m", note: "🌸 櫻花野餐<br>🛍️ lumine est<br><a href='https://maps.google.com/?cid=9702424083992202049&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mt-1'><i class='fa-solid fa-map-pin'></i> 新宿高島屋3F (俞君買Celine短夾)</a>", image: "https://images.unsplash.com/photo-1554797589-7241f4bce47b?w=800&q=80" },
+                    { time: "16:30", title: "澀谷 SKY", category: "景點", transportType: "subway", travelTime: "15m", note: "<a href='https://maps.google.com/?cid=8067212359343678579&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-1'><i class='fa-solid fa-map-pin'></i> SHIBUYA SKY</a>🌅 看夕陽夜景 (須先搶票)", image: "https://images.unsplash.com/photo-1542640244-7e672d6cb466?w=800&q=80" },
+                    { time: "17:30", title: "原宿 表參道", category: "購物", transportType: "subway", travelTime: "10m", note: "🍞 吉伊卡哇 BAKERY<br>🧸 Kiddy Land<br>🛍️ Celine 表參道店", image: "https://images.unsplash.com/photo-1578345218746-50a26fba5a83?w=800&q=80" }
                 ]
             },
             {
                 date: "22", weekday: "Sun", location: "鎌倉", lat: 35.3181, lng: 139.5502,
                 events: [
-                    { time: "08:10", title: "大船站", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘 JR 上野東京線", image: "https://images.unsplash.com/photo-1557800636-894a64c1696f?w=800&q=80" },
-                    { time: "09:10", title: "湘南江之島站", category: "景點", transportType: "subway", travelTime: "15m", note: "搭倒吊單軌列車，買江之電一日券", image: "https://images.unsplash.com/photo-1560706692-75d5b78ff56a?w=800&q=80" },
-                    { time: "10:00", title: "江之島", category: "景點", transportType: "walk", travelTime: "15m", note: "買電梯票，參拜邊津宮、中津宮", image: "https://images.unsplash.com/photo-1502693892701-d8905307b275?w=800&q=80" },
-                    { time: "10:45", title: "魚見亭", category: "美食", transportType: "walk", travelTime: "10m", note: "<a href='https://maps.google.com/?cid=15664261647288573288&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 魚見亭</a> 懸崖邊吃魚丼看海", image: "https://images.unsplash.com/photo-1511690078903-71dc5a49f5e3?w=800&q=80" },
-                    { time: "13:30", title: "鎌倉小町通", category: "景點", transportType: "subway", travelTime: "25m", note: "asagohan早餐/大佛燒/鎌倉紅谷核桃糕", image: "https://images.unsplash.com/photo-1549454124-7eb326fc6e24?w=800&q=80" },
-                    { time: "16:30", title: "鎌倉高校前", category: "景點", transportType: "subway", travelTime: "15m", note: "知名平交道打卡", image: "https://images.unsplash.com/photo-1627914902146-538a7c2cdbd9?w=800&q=80" },
-                    { time: "17:30", title: "七里濱", category: "景點", transportType: "walk", travelTime: "15m", note: "看富士山與夕陽 / Pacific DRIVE-IN", image: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=800&q=80" },
-                    { time: "19:00", title: "上野站", category: "交通", transportType: "subway", travelTime: "60m", note: "搭 JR 橫須賀線回上野", image: "https://images.unsplash.com/photo-1520301255226-bf5f144451c1?w=800&q=80" }
+                    { time: "08:10", title: "大船站", category: "交通", transportType: "subway", travelTime: "45m", note: "🚆 搭乘 JR 上野東京線", image: "https://images.unsplash.com/photo-1557800636-894a64c1696f?w=800&q=80" },
+                    { time: "09:10", title: "湘南江之島站", category: "景點", transportType: "subway", travelTime: "15m", note: "🚟 搭倒吊單軌列車<br>🎫 買江之電一日券", image: "https://images.unsplash.com/photo-1560706692-75d5b78ff56a?w=800&q=80" },
+                    { time: "10:00", title: "江之島", category: "景點", transportType: "walk", travelTime: "15m", note: "🎫 買電梯票<br>⛩️ 參拜邊津宮、中津宮", image: "https://images.unsplash.com/photo-1502693892701-d8905307b275?w=800&q=80" },
+                    { time: "10:45", title: "魚見亭", category: "美食", transportType: "walk", travelTime: "10m", note: "<a href='https://maps.google.com/?cid=15664261647288573288&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-1'><i class='fa-solid fa-map-pin'></i> 魚見亭</a>🌊 懸崖邊吃魚丼看海", image: "https://images.unsplash.com/photo-1511690078903-71dc5a49f5e3?w=800&q=80" },
+                    { time: "13:30", title: "鎌倉小町通", category: "景點", transportType: "subway", travelTime: "25m", note: "🍳 asagohan早餐<br>🥞 大佛燒<br>🎁 鎌倉紅谷核桃糕", image: "https://images.unsplash.com/photo-1549454124-7eb326fc6e24?w=800&q=80" },
+                    { time: "16:30", title: "鎌倉高校前", category: "景點", transportType: "subway", travelTime: "15m", note: "📸 知名平交道打卡", image: "https://images.unsplash.com/photo-1627914902146-538a7c2cdbd9?w=800&q=80" },
+                    { time: "17:30", title: "七里濱", category: "景點", transportType: "walk", travelTime: "15m", note: "🗻 看富士山與夕陽<br>🍹 Pacific DRIVE-IN", image: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=800&q=80" },
+                    { time: "19:00", title: "上野站", category: "交通", transportType: "subway", travelTime: "60m", note: "🚆 搭 JR 橫須賀線回上野", image: "https://images.unsplash.com/photo-1520301255226-bf5f144451c1?w=800&q=80" }
                 ]
             },
             {
                 date: "23", weekday: "Mon", location: "迪士尼", lat: 35.6329, lng: 139.8804,
                 events: [
-                    { time: "07:30", title: "舞濱站", category: "交通", transportType: "subway", travelTime: "45m", note: "日比谷線 -> 八丁堀轉車 -> JR京葉線", image: "https://images.unsplash.com/photo-1582200216428-212d1c1bd560?w=800&q=80" },
-                    { time: "08:30", title: "東京迪士尼樂園", category: "景點", transportType: "walk", travelTime: "10m", note: "<a href='https://maps.google.com/?cid=16490271119724106699&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='text-blue-500 hover:text-blue-700 underline font-bold'><i class='fa-solid fa-map-pin'></i> 東京迪士尼樂園</a> 進門先搶PP與付費DPA", image: "https://images.unsplash.com/photo-1505990422501-83952ba5c2a1?w=800&q=80" },
-                    { time: "10:00", title: "迪士尼設施攻略", category: "景點", transportType: "walk", travelTime: "0m", note: "怪獸電力公司、美女與野獸、飛濺山等", image: "https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=800&q=80" },
-                    { time: "15:00", title: "眾彩交融遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "面向城堡的左側，小飛象對面", image: "https://images.unsplash.com/photo-1530263666993-9c59573887c3?w=800&q=80" },
-                    { time: "19:45", title: "電子大遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "面向城堡的右側 (建議提前1小時佔位)", image: "https://images.unsplash.com/photo-1514316454349-750c2f8251e5?w=800&q=80" },
-                    { time: "21:00", title: "炉端焼き ご縁もん", category: "美食", transportType: "subway", travelTime: "45m", note: "回到上野本店吃宵夜 (可先預約)", image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80" }
+                    { time: "07:30", title: "舞濱站", category: "交通", transportType: "subway", travelTime: "45m", note: "🚇 日比谷線 -> 八丁堀轉車<br>🚆 JR京葉線", image: "https://images.unsplash.com/photo-1582200216428-212d1c1bd560?w=800&q=80" },
+                    { time: "08:30", title: "東京迪士尼樂園", category: "景點", transportType: "walk", travelTime: "10m", note: "<a href='https://maps.google.com/?cid=16490271119724106699&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQ' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-1'><i class='fa-solid fa-map-pin'></i> 東京迪士尼樂園</a>💡 進門先搶 PP 與付費 DPA", image: "https://images.unsplash.com/photo-1505990422501-83952ba5c2a1?w=800&q=80" },
+                    { time: "10:00", title: "迪士尼設施攻略", category: "景點", transportType: "walk", travelTime: "0m", note: "🎢 怪獸電力公司<br>☕ 美女與野獸<br>💦 飛濺山 等", image: "https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=800&q=80" },
+                    { time: "15:00", title: "眾彩交融遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "🏰 面向城堡的左側<br>🐘 小飛象對面", image: "https://images.unsplash.com/photo-1530263666993-9c59573887c3?w=800&q=80" },
+                    { time: "19:45", title: "電子大遊行", category: "景點", transportType: "walk", travelTime: "0m", note: "🏰 面向城堡的右側<br>⚠️ 建議提前1小時佔位", image: "https://images.unsplash.com/photo-1514316454349-750c2f8251e5?w=800&q=80" },
+                    { time: "21:00", title: "炉端焼き ご縁もん", category: "美食", transportType: "subway", travelTime: "45m", note: "<a href='http://googleusercontent.com/maps.google.com/goenmon' target='_blank' class='block text-blue-500 hover:text-blue-700 underline font-bold mb-1'><i class='fa-solid fa-map-pin'></i> 炉端焼き ご縁もん</a>🏮 回到上野本店吃宵夜 (可先預約)", image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&q=80" }
                 ]
             },
             {
                 date: "24", weekday: "Tue", location: "成田機場", lat: 35.7720, lng: 140.3929,
                 events: [
-                    { time: "07:00", title: "上野恩賜公園", category: "景點", transportType: "walk", travelTime: "10m", note: "早起散步賞櫻，回飯店 Check-out", image: "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=800&q=80" },
-                    { time: "08:20", title: "成田機場 T2", category: "交通", transportType: "subway", travelTime: "45m", note: "搭乘 8:20 京成電鐵 Skyliner", image: "https://images.unsplash.com/photo-1524168285510-cb83713f0099?w=800&q=80" },
-                    { time: "09:00", title: "機場報到", category: "航班", transportType: "walk", travelTime: "5m", note: "虎航在 T2，與去程 T1 不同！", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80" },
-                    { time: "11:25", title: "桃園機場", category: "航班", transportType: "plane", travelTime: "0m", note: "滿載而歸", image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&q=80" }
+                    { time: "07:00", title: "上野恩賜公園", category: "景點", transportType: "walk", travelTime: "10m", note: "🌸 早起散步賞櫻<br>🏨 回飯店 Check-out", image: "https://images.unsplash.com/photo-1522383225653-ed111181a951?w=800&q=80" },
+                    { time: "08:20", title: "成田機場 T2", category: "交通", transportType: "subway", travelTime: "45m", note: "🚆 搭乘 8:20 京成電鐵 Skyliner", image: "https://images.unsplash.com/photo-1524168285510-cb83713f0099?w=800&q=80" },
+                    { time: "09:00", title: "機場報到", category: "航班", transportType: "walk", travelTime: "5m", note: "⚠️ <b>虎航在 T2，與去程 T1 不同！</b>", image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80" },
+                    { time: "11:25", title: "桃園機場", category: "航班", transportType: "plane", travelTime: "0m", note: "🇹🇼 滿載而歸", image: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&q=80" }
                 ]
             }
         ];
