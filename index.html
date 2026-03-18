@@ -170,7 +170,7 @@
                     <div v-if="expandedLocations[loc]" class="mt-2 space-y-2 pl-2 border-l-2 border-orange-100 ml-3">
                         <div v-for="item in getFoodsByLocation(loc)" :key="item.id" class="bg-white p-3 rounded-lg shadow-sm flex items-center justify-between border border-slate-50">
                             <div class="flex items-center">
-                                <i class="fa-solid fa-burger text-slate-300 mr-3 text-xs"></i>
+                               <div class="w-9 h-9 bg-orange-50 rounded-xl mr-3 flex items-center justify-center shadow-inner overflow-hidden border border-orange-100 p-1"> <img :src="item.sticker || '你的預設櫻花貼紙.png'" :alt="item.name" class="w-full h-full object-contain"> </div>
                                 <span :class="{'line-through text-slate-300': item.checked}" class="text-sm">{{ item.name }}</span>
                             </div>
                             <div class="flex items-center space-x-3">
@@ -205,7 +205,7 @@
                     <div v-if="filteredShoppingList.length === 0" class="text-center py-10 text-slate-400"><p>空空的</p></div>
                     <div v-for="(item) in filteredShoppingList" :key="item.id" class="bg-white rounded-2xl shadow-sm border border-slate-100 p-3 mb-2 flex items-center relative group">
                         <button @click="deleteItem('shopping', item.id)" class="absolute top-2 right-2 text-slate-300 hover:text-red-400"><i class="fa-solid fa-times"></i></button>
-                        <div class="w-10 h-10 bg-slate-50 rounded-lg mr-3 flex items-center justify-center text-slate-300"><i class="fa-solid fa-gift"></i></div>
+                        <div class="w-11 h-11 bg-pink-50 rounded-2xl mr-3 flex items-center justify-center shadow-inner overflow-hidden border border-pink-100 p-1"> <img :src="item.sticker || '你的預設櫻花貼紙.png'" :alt="item.name" class="w-full h-full object-contain"> </div>
                         <div class="flex-1">
                             <h4 class="font-bold text-slate-700 text-sm" :class="{'line-through text-slate-300': item.checked}">{{ item.name }}</h4>
                             <p class="text-xs text-slate-400">¥{{ item.price }} <span v-if="item.recipient" class="ml-1 bg-pink-50 text-pink-500 px-2 py-0.5 rounded-full text-[9px]">給: {{ item.recipient }}</span></p>
@@ -456,6 +456,26 @@
                         { name: '俞君', image: 'y.jpg', bg: 'bg-pink-100 text-pink-500' },
                         { name: '謙', image: 'c.jpg', bg: 'bg-green-100 text-green-500' }
                     ],
+                    myStickerPool: [
+                        's1.jpg',
+                        's2.jpg',
+                        's3.jpg',
+                        's4.jpg',
+                        's5.jpg',
+                        's6.jpg',
+                        's7.jpg',
+                        's8.jpg',
+                        's9.jpg',
+                        's10.jpg',
+                        's11.jpg',
+                        's12.jpg',
+                        's13.jpg',
+                        's14.jpg',
+                        's15.jpg',
+                        's16.jpeg',
+                        's17.jpg'
+                    ],
+                    currentStickerIndex: 0,
                     weatherLoading: false, currentWeather: { temp: '--', desc: '載入中', icon: 'fa-solid fa-cloud' }
                 }
             },
@@ -534,13 +554,36 @@
                 getCategoryColor(c) { return {'景點':'bg-pink-400','美食':'bg-orange-400','住宿':'bg-indigo-400','購物':'bg-yellow-400','航班':'bg-blue-400','交通':'bg-teal-500'}[c] || 'bg-gray-400'; },
                 getCategoryIcon(c) { return {'景點':'fa-solid fa-camera','美食':'fa-solid fa-utensils','住宿':'fa-solid fa-bed','購物':'fa-solid fa-bag-shopping','航班':'fa-solid fa-plane','交通':'fa-solid fa-train'}[c] || 'fa-solid fa-circle'; },
                 closeModal() { this.showAddModal = null; this.newItem = { name:'', amount:'', date: new Date().toISOString().split('T')[0], recipient: '', location: '', type: '機票', link: '', note: '' }; },
+            // ✨ 修改後的新增邏輯：自動配對貼紙 ✨
                 confirmAdd() {
                     if (!this.newItem.name) return;
+                    
+                    // 1. 從貼紙大軍中「依序」挑選一張貼紙
+                    const selectedSticker = this.myStickerPool[this.currentStickerIndex];
+                    
+                    // 2. 更新索引，讓下一次新增時使用下一張 (自動循環)
+                    this.currentStickerIndex = (this.currentStickerIndex + 1) % this.myStickerPool.length;
+                    
+                    // 3. 準備把貼紙跟著資料一起送走
                     if (this.showAddModal === 'food') {
-                        push(ref(db, 'foods'), { name: this.newItem.name, location: this.newItem.location || '未分類', checked: false });
+                        // 在 foods 資料庫裡加上 sticker: selectedSticker
+                        push(ref(db, 'foods'), { 
+                            name: this.newItem.name, 
+                            location: this.newItem.location || '未分類', 
+                            checked: false,
+                            sticker: selectedSticker // ✨ 新增這行！
+                        });
                         this.expandedLocations[this.newItem.location] = true;
                     } else if (this.showAddModal === 'shopping') {
-                        push(ref(db, 'shopping'), { name: this.newItem.name, price: this.newItem.amount || 0, creator: this.activeMember, recipient: this.newItem.recipient, checked: false });
+                        // 在 shopping 資料庫裡加上 sticker: selectedSticker
+                        push(ref(db, 'shopping'), { 
+                            name: this.newItem.name, 
+                            price: this.newItem.amount || 0, 
+                            creator: this.activeMember, 
+                            recipient: this.newItem.recipient, 
+                            checked: false,
+                            sticker: selectedSticker // ✨ 新增這行！
+                        });
                     } else if (this.showAddModal === 'expense') {
                         push(ref(db, 'expenses'), { name: this.newItem.name, amount: this.newItem.amount || 0, date: this.newItem.date, creator: this.activeMember });
                     }
