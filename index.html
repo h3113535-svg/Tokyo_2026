@@ -126,6 +126,41 @@
 
             <div v-if="currentTab === 'food'">
                 <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center">美食許願池 <i class="fa-solid fa-utensils ml-2 text-orange-400"></i></h2>
+                <div class="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-2xl mb-6 shadow-sm border border-blue-100">
+                <h3 class="font-bold text-blue-600 text-sm mb-3 flex items-center">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-2 text-yellow-500"></i> 一鍵找附近神級美食
+                </h3>
+                
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <label class="flex items-center bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm cursor-pointer transition" :class="{'border-blue-400 bg-blue-50 ring-1 ring-blue-200': magicFoodType === '海鮮 無肉'}">
+                        <input type="radio" v-model="magicFoodType" value="海鮮 無肉" class="hidden">
+                        <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-fish mr-1 text-blue-500"></i>海鮮 (無肉)</span>
+                    </label>
+                    <label class="flex items-center bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm cursor-pointer transition" :class="{'border-orange-400 bg-orange-50 ring-1 ring-orange-200': magicFoodType === '燒肉'}">
+                        <input type="radio" v-model="magicFoodType" value="燒肉" class="hidden">
+                        <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-fire mr-1 text-orange-500"></i>和牛燒肉</span>
+                    </label>
+                    <label class="flex items-center bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm cursor-pointer transition" :class="{'border-amber-400 bg-amber-50 ring-1 ring-amber-200': magicFoodType === '居酒屋'}">
+                        <input type="radio" v-model="magicFoodType" value="居酒屋" class="hidden">
+                        <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-beer-mug-empty mr-1 text-amber-500"></i>居酒屋</span>
+                    </label>
+                </div>
+
+                <p class="text-[10px] text-slate-500 mb-3 leading-relaxed">
+                    💡 <b>系統說明：</b>Tabelog 3.3 分約等於 Google 4.1 分。點擊後會自動帶入「目前定位」進行嚴格篩選！
+                </p>
+                
+                <div class="flex space-x-2">
+                    <a :href="'https://www.google.com/maps/search/附近 ' + magicFoodType + ' 餐廳 4.1星級以上/'" target="_blank" 
+                       class="flex-1 bg-white border border-slate-200 text-slate-600 text-xs font-bold py-2.5 rounded-xl text-center shadow-sm hover:bg-slate-50 transition flex items-center justify-center">
+                        <i class="fa-brands fa-google text-blue-500 mr-2"></i> Google 4.1+
+                    </a>
+                    <a :href="'https://tabelog.com/tw/tokyo/rstLst/?vs=1&sk=' + encodeURIComponent(magicFoodType)" target="_blank"
+                       class="flex-1 bg-[#ff7a00] text-white border border-[#e66e00] text-xs font-bold py-2.5 rounded-xl text-center shadow-sm hover:bg-[#e66e00] transition flex items-center justify-center">
+                        <i class="fa-solid fa-utensils mr-2"></i> Tabelog 搜尋
+                    </a>
+                </div>
+            </div>
                 <div v-if="foodLocations.length === 0" class="text-center py-10 text-slate-400"><p>按右下角新增美食地點！</p></div>
                 <div v-for="loc in foodLocations" :key="loc" class="mb-3">
                     <div class="flex justify-between items-center bg-orange-50/80 border border-orange-100 p-3 rounded-xl cursor-pointer hover:bg-orange-100 transition" @click="toggleLocation(loc)">
@@ -410,6 +445,7 @@
                     headerImage: headerImage,
                     currentTab: 'schedule', scheduleData: scheduleData, selectedDayIndex: 0,
                     yenAmount: 1000, exchangeRate: 0.215,
+                    magicFoodType: '海鮮 無肉', 
                     shoppingList: [], expenseList: [], foods: [], 
                     notepadText: defaultNotepadText, 
                     saveStatus: false, 
