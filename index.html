@@ -148,6 +148,14 @@
                         <input type="radio" v-model="magicFoodType" value="咖哩" class="hidden">
                         <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-beer-mug-empty mr-1 text-amber-500"></i>咖哩</span>
                     </label>
+                    <label class="flex items-center bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm cursor-pointer transition" :class="{'border-amber-400 bg-amber-50 ring-1 ring-amber-200': magicFoodType === '義式'}">
+                        <input type="radio" v-model="magicFoodType" value="義式" class="hidden">
+                        <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-beer-mug-empty mr-1 text-amber-500"></i>義式</span>
+                    </label>
+                    <label class="flex items-center bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm cursor-pointer transition" :class="{'border-amber-400 bg-amber-50 ring-1 ring-amber-200': magicFoodType === '韓式'}">
+                        <input type="radio" v-model="magicFoodType" value="韓式" class="hidden">
+                        <span class="text-xs font-bold text-slate-700"><i class="fa-solid fa-beer-mug-empty mr-1 text-amber-500"></i>韓式</span>
+                    </label>
                 </div>
 
                 <p class="text-[10px] text-slate-500 mb-3 leading-relaxed">
