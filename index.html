@@ -475,7 +475,7 @@
                         's16.jpeg',
                         's17.jpg'
                     ],
-                    currentStickerIndex: 0,
+                    availableStickers: [],
                     weatherLoading: false, currentWeather: { temp: '--', desc: '載入中', icon: 'fa-solid fa-cloud' }
                 }
             },
@@ -526,6 +526,20 @@
                         console.log("匯率載入失敗", e);
                     }
                 },
+                getRandomSticker() {
+                // 如果袋子空了（全部抽過一輪了），就把所有貼紙重新補滿袋子！
+                    if (this.availableStickers.length === 0) {
+                        this.availableStickers = [...this.myStickerPool];
+                    }
+                
+                    // 隨機決定要抽袋子裡的第幾張
+                    const randomIndex = Math.floor(Math.random() * this.availableStickers.length);
+                
+                    // 拿出那張貼紙 (splice 會同時把它從袋子裡拿掉，避免重複)
+                    const selectedSticker = this.availableStickers.splice(randomIndex, 1)[0];
+                
+                    return selectedSticker;
+                },
                 saveNote() {
                     update(ref(db), { notepad: this.notepadText }).then(() => {
                         this.saveStatus = true;
@@ -559,30 +573,24 @@
                     if (!this.newItem.name) return;
                     
                     // 1. 從貼紙大軍中「依序」挑選一張貼紙
-                    const selectedSticker = this.myStickerPool[this.currentStickerIndex];
-                    
-                    // 2. 更新索引，讓下一次新增時使用下一張 (自動循環)
-                    this.currentStickerIndex = (this.currentStickerIndex + 1) % this.myStickerPool.length;
-                    
-                    // 3. 準備把貼紙跟著資料一起送走
+                    const selectedSticker = this.getRandomSticker();
+                    // 2. 準備把貼紙跟著資料一起送走
                     if (this.showAddModal === 'food') {
-                        // 在 foods 資料庫裡加上 sticker: selectedSticker
                         push(ref(db, 'foods'), { 
                             name: this.newItem.name, 
                             location: this.newItem.location || '未分類', 
                             checked: false,
-                            sticker: selectedSticker // ✨ 新增這行！
+                            sticker: selectedSticker // 貼上剛剛抽到的貼紙
                         });
                         this.expandedLocations[this.newItem.location] = true;
                     } else if (this.showAddModal === 'shopping') {
-                        // 在 shopping 資料庫裡加上 sticker: selectedSticker
                         push(ref(db, 'shopping'), { 
                             name: this.newItem.name, 
                             price: this.newItem.amount || 0, 
                             creator: this.activeMember, 
                             recipient: this.newItem.recipient, 
                             checked: false,
-                            sticker: selectedSticker // ✨ 新增這行！
+                            sticker: selectedSticker // 貼上剛剛抽到的貼紙
                         });
                     } else if (this.showAddModal === 'expense') {
                         push(ref(db, 'expenses'), { name: this.newItem.name, amount: this.newItem.amount || 0, date: this.newItem.date, creator: this.activeMember });
